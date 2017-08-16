@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>录入信息</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<% include ../include/script.html %>
+<style type="text/css">
+.videos-container .video {
+	background-color: gray;
+	margin-right: 50px;
+	border: 10px solid gray;
+	float: left;
+}
+
+.row {
+	padding-top: 15px;
+	clear: both;
+}
+</style>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$(".videos-container .video").click(function() {
+			location.href = "/admin/messages/" + $(this).data("id");
+		});
+	});
+</script>
+</head>
+<body>
+	<!-- HTML Form (wrapped in a .bootstrap-iso div) -->
+	<div class="bootstrap-iso">
+		<div class="container-fluid">
+			<div class="videos-container" style="margin: 10px;">
+				<%for (var i=0;i
+				<messages.length;i++){%>
+				<div class="video" data-title="<%=messages[i].title%>" data-id="<%=messages[i]._id%>">
+					<video width="200" src="<%=messages[i].videoUrl%>"></video>
+					<br> <span><%=messages[i].title%> &nbsp; <%=messages[i].date%></span>
+				</div>
+				<%}%> 
+			</div>
+		</div>
+	</div>
+</body>
+
+
+</html>

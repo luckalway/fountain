@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>上传视频</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<% include ../../include/script.html %>
+<style type="text/css">
+.return {
+	margin: 10px;
+}
+</style>
+</head>
+<body>
+	<div class="panel panel-primary">
+		<a href='/admin/messages/' class="return">[返回]</a>
+		<div class="panel-heading">
+			<h3 class="panel-title"><%=message.title%></h3>
+		</div>
+		<div class="panel-body">
+
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h3 class="panel-title">标题：</h3>
+				</div>
+				<div class="panel-body">【讲台】<%=message.title%>(<%=message.numOfTotal%>)</div>
+
+				<div class="panel-heading">
+					<h3 class="panel-title">经文</h3>
+				</div>
+				<div class="panel-body"><%=message.scripture%></div>
+			</div>
+
+
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h3 class="panel-title">概要</h3>
+				</div>
+				<div class="panel-body"><%=message.summary%></div>
+			</div>
+
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h3 class="panel-title">讲台视频URL</h3>
+				</div>
+				<div class="panel-body">
+					<a target="_blank" href="<%=message.videoUrl%>"><%=message.videoUrl%></a>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

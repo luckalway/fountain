@@ -1,0 +1,96 @@
+.elim-gallery {
+	width: 100%;
+	margin-top: 20px;
+	height: auto;
+	text-align: left;
+	float: left;
+}
+
+.gallery-container li {
+	border: 3px solid #FFFF40;
+	cursor: pointer;
+}
+
+.gallery-container li:hover img {
+	transform: scale(0.9)
+}
+
+.elim-gallery li.active {
+	border: 3px solid #FFFFFF;
+}
+
+.elim-gallery ul.gallery-container {
+	display: table;
+}
+
+.elim-gallery ul.gallery-container li {
+	display: table;
+	vertical-align: middle;
+	text-align: center;
+	width: 166px;
+	height: 166px;
+	float: left;
+	margin: 5px;
+	list-style: none;
+	overflow: hidden;
+}
+
+.elim-gallery ul.gallery-container li span {
+	display: table-cell;
+	vertical-align: middle;
+	height: 100%;
+	float: none;
+}
+
+.elim-gallery-slider {
+	border-left: 10px solid red;
+	border-right: 10px solid red;
+	width: 700px;
+	z-index: 999;
+	position: fixed;
+	z-index: 1200;
+	left: 25%;
+	top: 0px;
+	display: none;
+	overflow: hidden;
+}
+
+.elim-gallery-slider ul {
+	padding: 0px;
+	margin: 0px;
+	border: 0px;
+	border: 1px solid blue;
+	border: 0px;
+	position: absolute;
+}
+
+.elim-gallery-slider li {
+	border-top: 2px solid #FFF;
+	border-bottom: 2px solid #FFF;
+	list-style: outside none none;
+}
+
+.elim-gallery-cover-shade {
+	background: gray;
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	display: none;
+	z-index: 20;
+	filter: alpha(opacity = 70);
+	opacity: 0.7 !important;
+	z-index: 99;
+}
+
+.elim-gallery-close {
+	background-image: url("img/exit_close.png");
+	position: fixed;
+	float: right;
+	right: 20px;
+	width: 100px;
+	height: 100px;
+	filter: alpha(opacity = 80);
+	opacity: 0.8 !important;
+}

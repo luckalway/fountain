@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>录入信息</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<% include ../../include/script.html %>
+<style type="text/css">
+.videos-container .video {
+	background-color: gray;
+	margin-right: 50px;
+	border: 10px solid gray;
+	float: left;
+	margin: 5px;
+}
+
+.row {
+	padding-top: 15px;
+	clear: both;
+}
+</style>
+
+<script type="text/javascript">
+$(document).ready(function() {
+	$(".videos-container button").click(function() {
+		var id = $(this).data("id");
+		console.log(id);
+		$.ajax({
+		    url: 'pending-videos/'+id,
+		    type: 'DELETE',
+		    success: function(result) {
+		    	console.log(result);
+		    }
+		});
+	});
+
+});
+</script>
+</head>
+<body>
+	<!-- HTML Form (wrapped in a .bootstrap-iso div) -->
+	<div class="bootstrap-iso">
+		<div class="container-fluid">
+			<div class="videos-container" style="margin: 10px;">
+				<%for (var i=0;i<message_videos.length;i++){%>
+				<div class="video" data-title="<%=message_videos[i].title%>" data-url="<%=message_videos[i].url%>">
+					<video width="200" src="<%=message_videos[i].url%>"></video><br>
+					<button type="button" class="btn btn-secondary btn-lg" data-id="<%=message_videos[i]._id%>" data-rev="<%=message_videos[i]._rev%>">删除</button>
+				</div>
+				<%}%> 
+			</div>
+		</div>
+	</div>
+</body>
+
+
+</html>
