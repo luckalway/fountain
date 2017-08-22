@@ -13,11 +13,12 @@ var signIn = require('./routes/signIn');
 var message = require('./routes/message');
 var api = require('./routes/api');
 
-global.ROOT_PATH = __dirname;
-global.nano = require('nano')(require('./env').couchdb.url);
-global.couchdb = nano.db.use(require('./env').couchdb.db);
-
 var app = express();
+
+global.ROOT_PATH = __dirname;
+global.nano = require('nano')(require('./env-'+app.get('env')).couchdb.url);
+global.couchdb = nano.db.use(require('./env-'+app.get('env')).couchdb.db);
+
 
 // view engine setup
 app.engine('html', ejs.__express);
@@ -64,7 +65,7 @@ app.use(function(req, res, next) {
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  res.locals.error = app.get('env') === 'development' ? err : {};
 
   // render the error page
   res.status(err.status || 500);
