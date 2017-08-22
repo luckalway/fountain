@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>上传视频</title>
+<title>讲道信息 - <%=message.title%></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <% include ../../include/script.html %>
@@ -11,15 +11,31 @@
 	margin: 10px;
 }
 </style>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("#video-player-url").text(location.protocol+'//'+location.host+$("#video-player-url").attr('href'));
+	});
+</script>
+
+
 </head>
 <body>
+<% include ../../include/header.html %>
+
 	<div class="panel panel-primary">
-		<a href='/admin/messages/' class="return">[返回]</a>
 		<div class="panel-heading">
 			<h3 class="panel-title"><%=message.title%></h3>
 		</div>
 		<div class="panel-body">
-
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						<span class="label label-primary">发布日期：<%=message.publishDate%></span>
+						<span class="label label-default">讲道日期：<%=message.date%></span>
+					</h3>
+				</div>
+			</div>
 			<div class="panel panel-info">
 				<div class="panel-heading">
 					<h3 class="panel-title">标题：</h3>
@@ -31,13 +47,21 @@
 				</div>
 				<div class="panel-body"><%=message.scripture%></div>
 			</div>
-
-
 			<div class="panel panel-info">
 				<div class="panel-heading">
 					<h3 class="panel-title">概要</h3>
 				</div>
-				<div class="panel-body"><%=message.summary%></div>
+				<div class="panel-body">
+				<% if (message.summary.type=='image') { %>
+					<% for (var i=0;i<message.summary.images.length;i++){ %>
+					  <img src="<%=message.summary.images[i].url%>"/>
+				    <% } %>  
+				<% } else if (message.summary.type=='ppt') { %>
+					(点击下载讲章PPT)&nbsp;<a href="<%=message.summary.ppt.url%>"><%=message.summary.ppt.name%></a>
+				<% } else {%>
+					<%=message.summary%>
+				<% } %>
+				
 			</div>
 
 			<div class="panel panel-info">
@@ -45,9 +69,19 @@
 					<h3 class="panel-title">讲台视频URL</h3>
 				</div>
 				<div class="panel-body">
-					<a target="_blank" href="<%=message.videoUrl%>"><%=message.videoUrl%></a>
+					<a target="_blank" id="video-player-url" href="/messages/<%=message._id%>/video"></a>
 				</div>
 			</div>
+			<% if (message.audio) { %>
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h3 class="panel-title">讲台音频</h3>
+				</div>
+				<div class="panel-body">
+					<a target="_blank" id="audio-url" href="<%=message.audio.url%>">下载音频</a>
+				</div>
+			</div>
+			<% } %>
 		</div>
 	</div>
 </body>

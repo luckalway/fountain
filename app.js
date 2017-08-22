@@ -9,6 +9,8 @@ var session = require('express-session');
 
 var index = require('./routes/index');
 var admin = require('./routes/admin');
+var signIn = require('./routes/signIn');
+var message = require('./routes/message');
 var api = require('./routes/api');
 
 global.ROOT_PATH = __dirname;
@@ -36,9 +38,20 @@ app.use(session({
 	  cookie: { secure: false }
 }));
 
+app.use(function(req, res, next) {
+	res.locals.signedIn = req.session.signedIn;
+	next();
+});
+
 app.use('/', index);
+app.use('/sign-in', signIn);
 app.use('/admin', admin);
 app.use('/api', api);
+app.use('/', message);
+app.use('/signout', function(req, res, next) {
+	req.session.signedIn = undefined;
+	res.redirect(req.headers.referer);
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -56,6 +69,11 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+});
+
+process.on('uncaughtException', function(err) {
+	console.log(err);
+	console.log(err.stack);
 });
 
 module.exports = app;

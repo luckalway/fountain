@@ -2,22 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>录入信息</title>
+<title>新建讲道信息</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <% include ../../include/script.html %>
-<link href="http://hayageek.github.io/jQuery-Upload-File/4.0.10/uploadfile.css" rel="stylesheet">
-<script src="http://hayageek.github.io/jQuery-Upload-File/4.0.10/jquery.uploadfile.min.js"></script>
+<link href="/framework/jquery.uploadfile/uploadfile.css" rel="stylesheet">
+<script src="/framework/jquery.uploadfile/jquery.uploadfile.min.js"></script>
 
 <style type="text/css">
-.videos-container .video {
-	background-color: gray;
-	margin-right: 50px;
-	border: 10px solid gray;
-	float: left;
-	margin: 5px;
-}
-
 .row {
 	padding-top: 15px;
 	clear: both;
@@ -26,23 +18,6 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		$(".videos-container .video").click(function() {
-			$(".videos-container .video").each(function(i, e) {
-				$(e).css({
-					border : "10px solid gray"
-				});
-			});
-
-			$(this).css({
-				border : "10px solid red"
-			});
-
-			$("#title").val($(this).data("title"));
-			$("#videoUrl").val($(this).data("url"));
-		});
-
-		$(".videos-container .video").first().click();
-
 		$(".date").datepicker({
 			dateFormat : "yy-mm-dd"
 		});
@@ -50,67 +25,81 @@
 		$("#videoUploader").uploadFile({
 			uploadStr : "上传视频",
 			url : "/admin/messages/" + $("#messageId").val() + "/videos",
-			fileName : "myfile",
+			fileName : "message-video",
 			onSuccess : function(files, data, xhr, pd) {
 				$("#message-form").slideDown("slow");
 				var data = JSON.parse(data);
-				$("#title").val(data.files[0].originalName);
-				$("#videoUrl").val(data.files[0].url);
+				var filename = data.files[0].originalName;
+				if(filename.split(".") == -1){
+					$("#title").val(filename);
+				}else{
+					$("#title").val(filename.split(".")[0]);
+				}
+			}
+		});
+
+		$("#audioUploader").uploadFile({
+			uploadStr : "上传音频",
+			url : "/admin/messages/" + $("#messageId").val() + "/audios",
+			fileName : "message-audio",
+			onSuccess : function(files, data, xhr, pd) {
+				$("#message-form").slideDown("slow");
+				var data = JSON.parse(data);
 			}
 		});
 
 		$("#pptUploader").uploadFile({
 			uploadStr : "上传PPT",
 			url : "/admin/messages/" + $("#messageId").val() + "/summary-ppts",
-			fileName : "myfile",
+			fileName : "summary-ppt",
 			onSuccess : function(files, data, xhr, pd) {
 				$("#message-form").slideDown("slow");
 				var data = JSON.parse(data);
-				$("#title").val(data.files[0].originalName);
-				$("#videoUrl").val(data.files[0].url);
+				$("#summary-tabs").children().hide();
 			}
 		});
 
 		$("#imagesUploader").uploadFile({
 			uploadStr : "上传图片",
 			url : "/admin/messages/" + $("#messageId").val() + "/summary-images",
-			fileName : "myfile",
+			fileName : "summary-images",
 			onSuccess : function(files, data, xhr, pd) {
 				$("#message-form").slideDown("slow");
 				var data = JSON.parse(data);
-				$("#title").val(data.files[0].originalName);
-				$("#videoUrl").val(data.files[0].url);
+				$("#summary-tabs").children().hide();
 			}
 		});
 	});
 </script>
 </head>
 <body>
+<% include ../../include/header.html %>
 
 	<!-- HTML Form (wrapped in a .bootstrap-iso div) -->
 	<div class="bootstrap-iso">
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-md-6 col-sm-6 col-xs-12">
-					<div id="videoUploader">上传视频</div>
+					<div id="videoUploader">上传视频</div> <div id="audioUploader">上传音频</div>
 				</div>
 			</div>
 
 			<form id="message-form" name="message-form" method="post">
 				<input type="hidden" id="messageId" value="<%=messageId%>"/>
-				<input type="hidden" id="videoUrl" name="videoUrl">
 				<div class="row">
 					<div class="col-lg-6">
 						<div class="form-group ">
-							<label class="control-label requiredField" for="title"> 讲道标题 <span class="asteriskField"> * </span>
-							</label> <input class="form-control" id="title" name="title" placeholder="请输入讲道标题" type="text" required="required" />
+							<label class="control-label requiredField" for="uniqueId"> 标示号 <span class="asteriskField"> * </span>
+							</label> <input class="form-control" id="uniqueId" name="uniqueId" type="text" required="required" style="width: 300px;display: inline-block;" placeholder="如果一篇讲道分多次，请用同一个标示号" maxlength="20"/>
+							&nbsp;
+							<label class="control-label requiredField" for="uniqueId"> 编号/总数 <span class="asteriskField"> * </span>
+							</label> <input class="form-control" id="uniqueId" name="uniqueId" type="text" required="required" style="width: auto;display: inline-block;" placeholder="比如:1/3" maxlength="4"/>
 						</div>
 					</div>
 					<div class="col-lg-6">
 						<div class="form-group ">
-							<label class="control-label requiredField" for="uniqueId"> 标示号 <span class="asteriskField"> * </span>
-							</label> <input class="form-control" id="uniqueId" name="uniqueId" type="text" required="required" /> <span
-								class="help-block" id="hint_uniqueId"> 一篇讲道分多次，请用同一个标示号 </span>
+							<label class="control-label requiredField" for="title"> 讲道标题 <span class="asteriskField"> * </span>
+							</label> <input class="form-control" id="title" name="title" placeholder="请输入讲道标题" type="text" required="required" style="display: inline-block;width: 400px;" maxlength="100"/>
 						</div>
 					</div>
 				</div>
@@ -119,18 +108,20 @@
 					<div class="col-lg-6">
 						<div class="form-group ">
 							<label class="control-label requiredField" for="category"> 分类 <span class="asteriskField"> * </span>
-							</label> <select class="select form-control" id="category" name="category" required="required">
+							</label> <select class="select form-control" id="category" name="category" required="required" style="width: auto;display: inline-block;">
 								<option value="fuyin">福音</option>
 								<option value="zaojiu">造就</option>
 								<option value="chajing">查经</option>
 							</select>
+							&nbsp;
+							<label class="control-label " for="date"> 讲道日期 </label> <input class="form-control date" id="date" name="date"
+								readonly="readonly" type="text" style="width: auto;display: inline-block;"/>&nbsp;
+							<label class="control-label " for="date"> 推送日期 </label>
+							<span class="asteriskField"> * </span> 
+							<input class="form-control date" id="publishDate" name="publishDate" readonly="readonly" type="text"style="width: auto;display: inline-block;" required="required"/>
 						</div>
 					</div>
 					<div class="col-lg-6">
-						<div class="form-group ">
-							<label class="control-label " for="date"> 讲道日期 </label> <input class="form-control date" id="date" name="date"
-								readonly="readonly" type="text" /> <span class="help-block" id="hint_date"> 当时讲道的日期 </span>
-						</div>
 					</div>
 				</div>
 
@@ -145,21 +136,21 @@
 						<div class="form-group ">
 							<label class="control-label " for="summary"> 概要 </label>
 							<!-- Nav tabs -->
-							<ul class="nav nav-tabs" role="tablist">
-								<li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">文字</a></li>
-								<li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">PPT</a></li>
-								<li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">图片</a></li>
+							<ul class="nav nav-tabs" role="tablist" id="summary-tabs">
+								<li role="presentation" class="active"><a href="#summary-text" aria-controls="summary-text" role="tab" data-toggle="tab">文字</a></li>
+								<li role="presentation"><a href="#summary-ppt" aria-controls="summary-ppt" role="tab" data-toggle="tab">PPT</a></li>
+								<li role="presentation"><a href="#summary-images" aria-controls="summary-images" role="tab" data-toggle="tab">图片</a></li>
 							</ul>
 
 							<!-- Tab panes -->
 							<div class="tab-content">
-								<div role="tabpanel" class="tab-pane active" id="home">
+								<div role="tabpanel" class="tab-pane active" id="summary-text">
 									<textarea class="form-control" cols="40" id="summary" name="summary" placeholder="请输入讲章概要" rows="10"></textarea>
 								</div>
-								<div role="tabpanel" class="tab-pane" id="profile">
+								<div role="tabpanel" class="tab-pane" id="summary-ppt">
 									<div id="pptUploader">上传PPT</div>
 								</div>
-								<div role="tabpanel" class="tab-pane" id="messages">
+								<div role="tabpanel" class="tab-pane" id="summary-images">
 									<div id="imagesUploader">上传图片</div>
 								</div>
 							</div>
@@ -169,14 +160,9 @@
 
 				<div class="row">
 					<div class="col-md-6 col-sm-6 col-xs-12">
-						<div class="form-group ">
-							<label class="control-label requiredField" for="category">序号和总数<span class="asteriskField"> * </span>
-							</label><input id="currentNo" class="form-control" name="numOfTotal" type="text" placeholder="E.g. 1/3"
-								required="required" />
-						</div>
 						<div class="form-group">
 							<div>
-								<button class="btn btn-primary " name="submit" type="submit">Submit</button>
+								<button class="btn btn-primary " name="submit" type="submit">提交</button>
 							</div>
 						</div>
 					</div>

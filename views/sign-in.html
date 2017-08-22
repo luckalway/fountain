@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>登录</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<% include include/script.html %>
+<style type="text/css">
+</style>
+
+<script type="text/javascript">
+	
+</script>
+</head>
+<body>
+	<!-- HTML Form (wrapped in a .bootstrap-iso div) -->
+	<div class="bootstrap-iso">
+		<div class="container-fluid">
+
+			<form id="sign-in-form" name="signInForm" method="post" class="form-horizontal">
+				<input type="hidden" name="redirectUrl" value="<%=redirectUrl%>"/>
+				<!-- Form Name -->
+				<legend>登录</legend>
+				<div class="alert alert-success" role="alert"><%=error%></div>
+				<!-- Text input-->
+				<div class="form-group">
+					<label class="col-md-4 control-label" for="username">用户名</label>
+					<div class="col-md-4">
+						<input id="username" name="username" placeholder="请输入用户名" class="form-control input-md" required="" type="text">
+
+					</div>
+				</div>
+
+				<!-- Password input-->
+				<div class="form-group">
+					<label class="col-md-4 control-label" for="password">密码</label>
+					<div class="col-md-4">
+						<input id="password" name="password" placeholder="请输入密码" class="form-control input-md" required="" type="password">
+
+					</div>
+				</div>
+
+
+
+				<div class="row">
+					<div class="col-md-6 col-sm-6 col-xs-12">
+						<div class="form-group">
+							<div>
+								<button class="btn btn-primary " name="submit" type="submit">提交</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</form>
+
+		</div>
+	</div>
+
+</body>

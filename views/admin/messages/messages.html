@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>录入信息</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<% include ../../include/script.html %>
+<style type="text/css">
+
+</style>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$(".view-detail-button").click(function() {
+			location.href = "/admin/messages/" + $(this).data("id");
+		});
+	});
+</script>
+</head>
+<body>
+<% include ../../include/header.html %>
+
+	<!-- HTML Form (wrapped in a .bootstrap-iso div) -->
+	<div class="bootstrap-iso">
+		<div class="container-fluid">
+			<div class="videos-container" style="margin: 10px;">
+					<%for (var i=0;i<messages.length;i=i+3){%>
+					<div class="row">
+					<%for (var j=i;j<i+3&&j<messages.length;j++){%>
+						<div class="col-sm-6 col-md-4">
+							<div class="thumbnail">
+								<video width="100%" src="<%=messages[j].video.url%>"></video>
+								<div class="caption">
+									<p><%=messages[j].title%>(<%=messages[j].date%>)</p>
+									<p>
+										<a href="#" class="btn btn-primary view-detail-button" role="button" data-id="<%=messages[j]._id%>">查看</a>
+										<span class="label label-primary">发布日期：<%=messages[j].publishDate%></span>
+									</p>
+								</div>
+							</div>
+						</div>
+					<%}%>  
+				</div>
+				<%}%>  
+			</div>
+		</div>
+	</div>
+</body>
+
+
+</html>

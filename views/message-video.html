@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title><%=message.title%></title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<% include include/script.html %>
+<style type="text/css">
+.videos-container .video {
+	background-color: gray;
+	margin-right: 50px;
+	border: 10px solid gray;
+	float: left;
+}
+
+.row {
+	padding-top: 15px;
+	clear: both;
+}
+</style>
+
+<script type="text/javascript">
+	
+</script>
+</head>
+<body>
+	<!-- HTML Form (wrapped in a .bootstrap-iso div) -->
+	<div class="bootstrap-iso">
+		<div class="container-fluid">
+			<div class="videos-container" style="margin-top: 30px; text-align: center;">
+				<video src="<%=message.video.url%>" width="900px;" controls="controls">您的浏览器不支持 video 标签。
+				</video>
+			</div>
+		</div>
+	</div>
+</body>
+
+
+</html>

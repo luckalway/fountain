@@ -8,42 +8,69 @@ var merge = require('merge')
 var BASE_UPLOAD_DIR = '/public/upload/messages/';
 var BASE_UPLOAD_URL = '/upload/messages/';
 
-router.get('/messages/pending-videos', function(req, res, next) {
-	couchdb.view("message_videos", "message_video", function(err, body) {
-		if (!err) {
-			var docs = [];
-			body.rows.forEach(function(doc) {
-				docs.push(doc.value);
-			});
-			res.render('admin/messages/pending-videos', { message_videos: docs });
+var ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+var generateId = function(length) {
+  var rtn = '';
+  for (var i = 0; i < length; i++) {
+    rtn += ALPHABET.charAt(Math.floor(Math.random() * ALPHABET.length));
+  }
+  return rtn;
+}
+
+upload.on('end', function (fileInfo, req, res) {
+	req.session.message = req.session.message || {};
+	
+	if(req.uploadedFileType == "video"){
+		req.session.message.video = {
+				title: fileInfo.originalName.split(".")[0],
+				filename: fileInfo.originalName,
+				url: fileInfo.url
 		}
-	});	
+	}else if(req.uploadedFileType == "summary-ppt"){
+    	req.session.message.summary = req.session.message.summary || {type: "ppt"};
+    	var summary = req.session.message.summary;
+    	summary.ppt = fileInfo;
+	}else if(req.uploadedFileType == "audio"){
+		req.session.message = req.session.message || {};
+		req.session.message.audio = {
+				title: fileInfo.originalName.split(".")[0],
+				filename: fileInfo.originalName,
+				url: fileInfo.url
+		}
+	}else if(req.uploadedFileType == "summary-images"){
+    	req.session.message.summary = req.session.message.summary || {type: "image"};
+    	var summary = req.session.message.summary;
+    	summary.images = summary.images || [];
+    	summary.imageNames = summary.imageNames || [];
+    	if(summary.imageNames.indexOf(fileInfo.name) == -1){
+    		summary.images.push(merge({},fileInfo));
+    		summary.imageNames.push(fileInfo.name);
+    	}
+	}
 });
 
-router.delete('/messages/pending-videos/:id', function(req, res, next) {
-	couchdb.get(req.params.id, {
-		revs_info : true
-	}, function(err, body) {
-		fs.unlinkSync(path.join(ROOT_PATH, BASE_UPLOAD_DIR, body.filename));
-		couchdb.destroy(body._id, body._rev, function(err, body) {
-			  if (!err)
-			    console.log(body);
-		});
-		res.status(200).end();
-	});
+router.use('/messages*', function(req, res, next) {
+	if(req.session.signedIn){
+		next();
+	}else{
+		res.redirect('/sign-in?redirectUrl='+encodeURI(req.originalUrl));
+	}
 });
 
-router.get('/messages/videos/upload', function(req, res, next) {
-  res.render('admin/messages/video-upload');
+router.use('/messages/create*', function(req, res, next) {
+	if(req.session.signedIn.role == 'shipin'){
+		next();
+	}else{
+		res.redirect('/admin/messages');
+	}
 });
 
 router.get('/messages/:id', function(req, res, next) {
-	if(req.params.id.length == 32){
+	if(req.params.id.length == 8){
 		couchdb.get(req.params.id, {
 			revs_info : true
 		}, function(err, body) {
-			console.log(body);
-			res.render('admin/messages/message-detail',{ message: body });
+			res.render('admin/messages/message-detail',{ message: body, host:req.headers.host});
 		});
 	}else{
 		next();
@@ -51,7 +78,8 @@ router.get('/messages/:id', function(req, res, next) {
 });
 
 router.post('/messages/:messageId/videos', function (req, res, next) {
-    upload.fileHandler({
+	req.uploadedFileType = "video";
+	upload.fileHandler({
         uploadDir: function () {
             return path.join(ROOT_PATH, BASE_UPLOAD_DIR, req.params.messageId); 
         },
@@ -60,18 +88,23 @@ router.post('/messages/:messageId/videos', function (req, res, next) {
         }
     })(req, res, next);
     
-    upload.on('end', function (fileInfo, req, res) {
-    	req.session.message = req.session.message || {};
-    	req.session.message.video = {
-			title: fileInfo.originalName.split(".")[0],
-    		filename: fileInfo.originalName,
-    		url: fileInfo.url
-        }
-    });
+});
 
+router.post('/messages/:messageId/audios', function (req, res, next) {
+	req.uploadedFileType = "audio";
+	upload.fileHandler({
+		uploadDir: function () {
+			return path.join(ROOT_PATH, BASE_UPLOAD_DIR, req.params.messageId); 
+		},
+		uploadUrl: function () {
+			return  BASE_UPLOAD_URL + "/" + req.params.messageId;
+		}
+	})(req, res, next);
+	
 });
 
 router.post('/messages/:messageId/summary-ppts', function (req, res, next) {
+	req.uploadedFileType = "summary-ppt";
     upload.fileHandler({
         uploadDir: function () {
             return path.join(ROOT_PATH, BASE_UPLOAD_DIR, req.params.messageId); 
@@ -80,19 +113,11 @@ router.post('/messages/:messageId/summary-ppts', function (req, res, next) {
         	return  BASE_UPLOAD_URL + "/" + req.params.messageId;
         }
     })(req, res, next);
-    
-    upload.on('end', function (fileInfo, req, res) {
-    	req.session.message = req.session.message || {};
-    	req.session.message.summary = req.session.message.summary || {type: "ppt"};
-    	var summary = req.session.message.summary;
-    	summary.ppt = fileInfo;
-    	
-    	console.log(req.session.message.summary);
-    });
 
 });
 
 router.post('/messages/:messageId/summary-images', function (req, res, next) {
+	req.uploadedFileType = "summary-images";
     upload.fileHandler({
         uploadDir: function () {
             return path.join(ROOT_PATH, BASE_UPLOAD_DIR, req.params.messageId); 
@@ -101,18 +126,6 @@ router.post('/messages/:messageId/summary-images', function (req, res, next) {
         	return  BASE_UPLOAD_URL + "/" + req.params.messageId;
         }
     })(req, res, next);
-    
-    upload.on('end', function (fileInfo, req, res) {
-    	req.session.message = req.session.message || {};
-    	req.session.message.summary = req.session.message.summary || {type: "image"};
-    	var summary = req.session.message.summary;
-    	summary.images = summary.images || [];
-    	summary.imageNames = summary.imageNames || [];
-    	if(summary.imageNames.indexOf(fileInfo.name) == -1){
-    		summary.images.push(fileInfo);
-    		summary.imageNames.push(fileInfo.name);
-    	}
-    });
 
 });
 
@@ -131,21 +144,18 @@ router.post('/messages/create', function(req, res, next) {
 	req.body.createdDate = Date.parse(new Date());
 	req.body.modifiedDate= Date.parse(new Date());
 	
-	req.session.message.table = "message";
-	console.log(merge(req.body,req.session.message));
-	//couchdb.insert(merge(req.session.message,body));
+	couchdb.insert(merge(req.body, req.session.message,{table:"message", _id:generateId(8)}));
 	res.redirect('/admin/messages');
 });
 
 router.get('/messages', function(req, res, next) {
 	couchdb.view("messages", "message", function(err, body) {
-		console.log(err);
 		if (!err) {
 			var docs = [];
 			body.rows.forEach(function(doc) {
 				docs.push(doc.value);
 			});
-			res.render('admin/messages', { messages: docs });
+			res.render('admin/messages/messages', { messages: docs });
 		}
 	});	
 });
