@@ -1,0 +1,161 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>上传讲道信息 - 第<%=partNo%>段</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<% include ../../include/script.html %>
+<link href="/framework/jquery.uploadfile/uploadfile.css" rel="stylesheet">
+<script src="/framework/jquery.uploadfile/jquery.uploadfile.min.js"></script>
+
+<style type="text/css">
+.row {
+	padding-top: 15px;
+	clear: both;
+}
+</style>
+
+<script type="text/javascript">
+	$(".date").datepicker({
+		dateFormat : "yy-mm-dd"
+	});
+
+	$(document).ready(function() {
+		$("#videoUploader").uploadFile({
+			uploadStr : "上传视频(mp4)",
+			allowedTypes: 'mp4',
+			extErrorStr: '格式不正确，只允许的格式：',
+			url : "/admin/messages/<%=messageId%>/parts/<%=partNo%>/videos",
+			fileName : "message-video",
+			onSuccess : function(files, data, xhr, pd) {
+				$("#message-form").slideDown("slow");
+				var data = JSON.parse(data);
+				var filename = data.files[0].originalName;
+				if(filename.split(".") == -1){
+					$("#title").val(filename);
+				}else{
+					$("#title").val(filename.split(".")[0]);
+				}
+			}
+		});
+
+		$("#audioUploader").uploadFile({
+			uploadStr : "上传音频(mp3)",
+			allowedTypes: 'mp3',
+			extErrorStr: '格式不正确，只允许的格式：',
+			url : "/admin/messages/<%=messageId%>/parts/<%=partNo%>/audios",
+			fileName : "message-audio",
+			onSuccess : function(files, data, xhr, pd) {
+				$("#message-form").slideDown("slow");
+				var data = JSON.parse(data);
+			}
+		});
+
+		$("#pptUploader").uploadFile({
+			uploadStr : "上传PPT",
+			allowedTypes: 'ppt,pptx',
+			extErrorStr: '格式不正确，只允许的格式：',
+			url : "/admin/messages/<%=messageId%>/parts/<%=partNo%>/summary-ppts",
+			fileName : "summary-ppt",
+			onSuccess : function(files, data, xhr, pd) {
+				$("#message-form").slideDown("slow");
+				var data = JSON.parse(data);
+				$("#summary-tabs").children().hide();
+			}
+		});
+
+		$("#imagesUploader").uploadFile({
+			uploadStr : "上传图片",
+			allowedTypes: 'jpg,png',
+			extErrorStr: '格式不正确，只允许的格式：',
+			url : "/admin/messages/<%=messageId%>/parts/<%=partNo%>/summary-images",
+			fileName : "summary-images",
+			onSuccess : function(files, data, xhr, pd) {
+				$("#message-form").slideDown("slow");
+				var data = JSON.parse(data);
+				$("#summary-tabs").children().hide();
+			}
+		});
+	});
+</script>
+</head>
+<body>
+<% include ../../include/header.html %>
+	<div class="page-header">
+	  <h3>上传讲道信息 <small>第<%=partNo%>段</small></h3>
+	</div>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-6 col-sm-6 col-xs-12">
+				<div id="videoUploader">上传视频</div> <div id="audioUploader">上传音频</div>
+			</div>
+		</div>
+
+		<form id="message-form" name="message-part-form" method="post" action="../parts">
+			<input type="hidden" id="messageId" name="messageId" value="<%=messageId%>"/>
+			<input type="hidden" id="partNo" name="partNo" value="<%=partNo%>"/>
+
+			<div class="row">
+				<div class="col-lg-6">
+					<div class="form-group ">
+						&nbsp;
+						<label class="control-label " for="date"> 推送日期 </label>
+						<span class="asteriskField"> * </span> 
+						<input class="form-control date" id="publishDate" name="publishDate" readonly="readonly" type="text"style="width: auto;display: inline-block;" required="required"/>
+					</div>
+				</div>
+				<div class="col-lg-6">
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-lg-6">
+					<div class="form-group ">
+						<label class="control-label " for="scripture">引用经文 </label>
+						<textarea class="form-control" cols="40" id="scripture" name="scripture" rows="10"></textarea>
+					</div>
+				</div>
+				<div class="col-lg-6">
+					<div class="form-group ">
+						<label class="control-label " for="summary"> 概要 </label>
+						<!-- Nav tabs -->
+						<ul class="nav nav-tabs" role="tablist" id="summary-tabs">
+							<li role="presentation" class="active"><a href="#summary-text" aria-controls="summary-text" role="tab" data-toggle="tab">文字</a></li>
+							<li role="presentation"><a href="#summary-ppt" aria-controls="summary-ppt" role="tab" data-toggle="tab">PPT(ppt,pptx)</a></li>
+							<li role="presentation"><a href="#summary-images" aria-controls="summary-images" role="tab" data-toggle="tab">图片(png、jpg)</a></li>
+						</ul>
+
+						<!-- Tab panes -->
+						<div class="tab-content">
+							<div role="tabpanel" class="tab-pane active" id="summary-text">
+								<textarea class="form-control" cols="40" id="summary" name="summary" placeholder="请输入讲章概要" rows="10"></textarea>
+							</div>
+							<div role="tabpanel" class="tab-pane" id="summary-ppt">
+								<div id="pptUploader">上传PPT</div>
+							</div>
+							<div role="tabpanel" class="tab-pane" id="summary-images">
+								<div id="imagesUploader">上传图片</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-6 col-sm-6 col-xs-12">
+					<div class="form-group">
+						<div>
+							<button class="btn btn-primary " name="submit" type="submit">保存</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</form>
+
+	</div>
+</body>
+
+
+</html>

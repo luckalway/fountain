@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>新建讲道信息</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<% include ../../include/script.html %>
+<link href="/framework/jquery.uploadfile/uploadfile.css" rel="stylesheet">
+<link href="/framework/bootstrap.wizard/bwizard.min.css" rel="stylesheet">
+
+<script src="/framework/jquery.uploadfile/jquery.uploadfile.min.js"></script>
+<script src="/framework/bootstrap.wizard/bwizard.js"></script>
+<script src="/framework/jquery.cookie.min.js"></script>
+
+<style type="text/css">
+.label, .badge {
+	font-size: 11.844px;
+	font-weight: bold;
+	line-height: 14px;
+	color: #fff;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+	white-space: nowrap;
+	vertical-align: baseline;
+	background-color: #999;
+}
+</style>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$(".date").datepicker({
+			dateFormat : "yy-mm-dd"
+		});
+	});
+</script>
+</head>
+<body>
+	<% include ../../include/header.html %>
+
+	<div class="container-fluid">
+
+		<div>
+			<form id="message-form" name="message-form" method="post" action="/admin/messages">
+				<div class="row">
+					<div class="col-lg-6" style="width: 100%;">
+						<div class="form-group ">
+							<label class="control-label requiredField" for="title"> 讲道标题 ：<span class="asteriskField"> * </span>
+							</label> <input class="form-control" id="title" name="title" placeholder="请输入讲道标题" type="text" required="required"
+								style="display: inline-block; width: 400px;" maxlength="100" /> &nbsp; <label
+								class="control-label requiredField" for="category"> 分类： <span class="asteriskField"> * </span>
+							</label> <select class="select form-control" id="category" name="category" required="required"
+								style="width: auto; display: inline-block;">
+								<option value="fuyin">福音</option>
+								<option value="zaojiu">造就</option>
+								<option value="chajing">查经</option>
+							</select> &nbsp; <label class="control-label " for="date"> 讲道日期 ：</label> <input class="form-control date" id="date"
+								name="date" readonly="readonly" type="text" style="width: auto; display: inline-block;" />&nbsp; &nbsp; <label
+								class="control-label " for="countOfParts"> 分几段推送： </label> <input class="form-control" id="countOfParts"
+								name="countOfParts" type="number" style="width: auto; display: inline-block;" value="1" max="20" />&nbsp;
+						</div>
+					</div>
+				</div>
+
+
+				<div class="row">
+					<div class="col-lg-6">
+						<div class="form-group ">
+							<label class="control-label " for="scripture">引用经文 </label>
+							<textarea class="form-control" cols="40" id="scripture" name="scripture" rows="10"></textarea>
+						</div>
+					</div>
+					<div class="col-lg-6">
+						<div class="form-group ">
+							<label class="control-label " for="summary"> 讲章 </label>
+							<textarea class="form-control" cols="40" id="summary" name="summary" placeholder="请输入讲章概要" rows="10"></textarea>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-md-6 col-sm-6 col-xs-12">
+						<div class="form-group">
+							<div>
+								<button class="btn btn-primary " name="submit" type="submit">保存</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</form>
+		</div>
+	</div>
+</body>
+
+
+</html>

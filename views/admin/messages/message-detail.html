@@ -14,33 +14,43 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		$("#video-player-url").text(location.protocol+'//'+location.host+$("#video-player-url").attr('href'));
+		$("#message-container").find("button").click(function() {
+			var glyphicon = $(this).find(".glyphicon");
+			if (glyphicon.hasClass("glyphicon-plus")) {
+				$("#message-base-info").slideDown(500,function(){
+					glyphicon.removeClass('glyphicon-plus');
+					glyphicon.addClass('glyphicon-minus');
+				});
+			} else {
+				$("#message-base-info").slideUp(500,function(){
+					glyphicon.removeClass('glyphicon-minus');
+					glyphicon.addClass('glyphicon-plus');
+				});
+			}
+		});
 	});
 </script>
 
 
 </head>
 <body>
-<% include ../../include/header.html %>
+	<% include ../../include/header.html %>
 
-	<div class="panel panel-primary">
+	<div id="message-container" class="panel panel-default">
 		<div class="panel-heading">
-			<h3 class="panel-title"><%=message.title%></h3>
+			<h3 class="panel-title">
+				<button type="button" class="btn btn-default" aria-label="Left Align">
+					<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+				</button>
+				<%=message.title%> - <span class="label label-default">讲道日期：<%=message.date%></span>
+			</h3>
 		</div>
-		<div class="panel-body">
-			<div class="panel panel-info">
-				<div class="panel-heading">
-					<h3 class="panel-title">
-						<span class="label label-primary">发布日期：<%=message.publishDate%></span>
-						<span class="label label-default">讲道日期：<%=message.date%></span>
-					</h3>
-				</div>
-			</div>
+		<div class="panel-body" id="message-base-info" style="display: none;">
 			<div class="panel panel-info">
 				<div class="panel-heading">
 					<h3 class="panel-title">标题：</h3>
 				</div>
-				<div class="panel-body">【讲台】<%=message.title%>(<%=message.numOfTotal%>)</div>
+				<div class="panel-body">【讲台】<%=message.title%></div>
 
 				<div class="panel-heading">
 					<h3 class="panel-title">经文</h3>
@@ -51,37 +61,83 @@
 				<div class="panel-heading">
 					<h3 class="panel-title">概要</h3>
 				</div>
-				<div class="panel-body">
-				<% if (message.summary.type=='image') { %>
-					<% for (var i=0;i<message.summary.images.length;i++){ %>
-					  <img src="<%=message.summary.images[i].url%>"/>
-				    <% } %>  
-				<% } else if (message.summary.type=='ppt') { %>
-					(点击下载讲章PPT)&nbsp;<a href="<%=message.summary.ppt.url%>"><%=message.summary.ppt.name%></a>
-				<% } else {%>
-					<%=message.summary%>
-				<% } %>
-				
+				<div class="panel-body"><%=message.summary%></div>
 			</div>
+		</div>
 
-			<div class="panel panel-info">
-				<div class="panel-heading">
-					<h3 class="panel-title">讲台视频URL</h3>
-				</div>
-				<div class="panel-body">
-					<a target="_blank" id="video-player-url" href="/messages/<%=message._id%>/video"></a>
-				</div>
-			</div>
-			<% if (message.audio) { %>
-			<div class="panel panel-info">
-				<div class="panel-heading">
-					<h3 class="panel-title">讲台音频</h3>
-				</div>
-				<div class="panel-body">
-					<a target="_blank" id="audio-url" href="<%=message.audio.url%>">下载音频</a>
-				</div>
-			</div>
+		<!-- Nav tabs -->
+		<ul class="nav nav-tabs" role="tablist" id="summary-tabs">
+		<% for (var i=0;i<messageParts.length;i++){ %>
+			<li role="presentation" <%if(i==0){%>class="active"<%}%>>
+			<% if(messageParts[i].uploaded){ %>
+				<a href="#part-<%=i+1%>" aria-controls="summary-text" role="tab" data-toggle="tab">
+					第<%=i+1%>段
+				</a>
+			<% } else { %>
+				<a href="/admin/messages/<%=message._id%>/parts/<%=i+1%>" target="_blank" role="tab">
+					第<%=i+1%>段(未上传，马上上传)
+				</a>
 			<% } %>
+		</li>
+		<% } %>		
+		</ul>
+
+		<!-- Tab panes -->
+		<div class="tab-content">
+		<% for (var i=0;i<messageParts.length;i++){ %>
+			<div role="tabpanel" class="tab-pane <%if(i==0){%>active<%}%>" id="part-<%=i+1%>">
+				<div class="panel-body">
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title">标题：</h3>
+						</div>
+						<div class="panel-body">【讲台】<%=message.title%>(<%=i+1%>/<%=message.countOfParts%>)</div>
+		
+						<div class="panel-heading">
+							<h3 class="panel-title">经文</h3>
+						</div>
+						<div class="panel-body"><%=messageParts[i].scripture%></div>
+					</div>
+					<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">概要</h3>
+					</div>
+					<div class="panel-body">
+					<% if(messageParts[i].uploaded){ %>
+						<% if (messageParts[i].summary.type=='image') { %>
+							<% for (var i=0;i<messageParts[i].summary.images.length;i++){ %>
+							  <img src="<%=messageParts[i].summary.images[i].url%>"/>
+						    <% } %> 
+						<% } else if (messageParts[i].summary.type=='ppt') { %>
+							(点击下载讲章PPT)&nbsp;<a href="<%=messageParts[i].summary.ppt.url%>"><%=messageParts[i].summary.ppt.name%></a>
+						<% } else {%>
+							<%=messageParts[i].summary%>
+						<% } %>
+					<% } %>	
+					</div>
+					
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title">讲台视频URL</h3>
+						</div>
+						<div class="panel-body">
+							<a target="_blank" id="video-player-url" href="/messages/<%=messageParts[i]._id%>/video">/messages/<%=messageParts[i]._id%>/video</a>
+						</div>
+					</div>
+					<% if (messageParts[i].audio) { %>
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title">讲台音频</h3>
+						</div>
+						<div class="panel-body">
+							<a target="_blank" id="audio-url" href="<%=messageParts[i].audio.url%>">下载音频</a>
+						</div>
+					</div>
+					<% } %>
+				</div>
+				</div>
+			</div>
+		<% } %>
 		</div>
 	</div>
 </body>

@@ -23,7 +23,9 @@
 		});
 
 		$("#videoUploader").uploadFile({
-			uploadStr : "上传视频",
+			uploadStr : "上传视频(mp4)",
+			allowedTypes: 'mp4',
+			extErrorStr: '格式不正确，只允许的格式：',
 			url : "/admin/messages/" + $("#messageId").val() + "/videos",
 			fileName : "message-video",
 			onSuccess : function(files, data, xhr, pd) {
@@ -39,7 +41,9 @@
 		});
 
 		$("#audioUploader").uploadFile({
-			uploadStr : "上传音频",
+			uploadStr : "上传音频(mp3)",
+			allowedTypes: 'mp3',
+			extErrorStr: '格式不正确，只允许的格式：',
 			url : "/admin/messages/" + $("#messageId").val() + "/audios",
 			fileName : "message-audio",
 			onSuccess : function(files, data, xhr, pd) {
