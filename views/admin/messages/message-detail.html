@@ -100,7 +100,7 @@
 					</div>
 					<div class="panel panel-info">
 					<div class="panel-heading">
-						<h3 class="panel-title">概要</h3>
+						<h3 class="panel-title">讲章</h3>
 					</div>
 					<div class="panel-body">
 					<% if(messageParts[i].uploaded){ %>
@@ -121,7 +121,7 @@
 							<h3 class="panel-title">讲台视频URL</h3>
 						</div>
 						<div class="panel-body">
-							<a target="_blank" id="video-player-url" href="/messages/<%=messageParts[i]._id%>/video">/messages/<%=messageParts[i]._id%>/video</a>
+							<a target="_blank" id="video-player-url" href="<%=videoPlayerUrl%>/messages/<%=messageParts[i]._id%>/video"><%=videoPlayerUrl%>/messages/<%=messageParts[i]._id%>/video</a>
 						</div>
 					</div>
 					<% if (messageParts[i].audio) { %>

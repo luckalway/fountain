@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var upload = require('jquery-file-upload-middleware');
 var path = require('path');
 var fs = require("fs");
 

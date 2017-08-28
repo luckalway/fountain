@@ -7,17 +7,19 @@ var bodyParser = require('body-parser');
 var ejs = require('ejs');
 var session = require('express-session');
 
+var app = express();
+var env = require('./env-'+app.get('env'));
+global.ROOT_PATH = __dirname;
+global.nano = require('nano')(env.couchdb.url);
+global.couchdb = nano.db.use(env.couchdb.db);
+global.CONF = env.conf;
+
+
 var index = require('./routes/index');
 var admin = require('./routes/admin');
 var signIn = require('./routes/signIn');
 var message = require('./routes/message');
 var api = require('./routes/api');
-
-var app = express();
-
-global.ROOT_PATH = __dirname;
-global.nano = require('nano')(require('./env-'+app.get('env')).couchdb.url);
-global.couchdb = nano.db.use(require('./env-'+app.get('env')).couchdb.db);
 
 
 // view engine setup
@@ -41,6 +43,7 @@ app.use(session({
 
 app.use(function(req, res, next) {
 	res.locals.signedIn = req.session.signedIn;
+	res.locals.videoPlayerUrl = CONF.videoPlayerUrl;
 	next();
 });
 

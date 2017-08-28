@@ -1,12 +1,13 @@
 var express = require('express');
-var router = express.Router();
-var upload = require('jquery-file-upload-middleware');
+var upload = require('../my_node_modules/jquery-file-upload-middleware');
 var path = require('path');
 var fs = require("fs");
 var merge = require('merge')
 
-var BASE_UPLOAD_DIR = '/public/upload/messages/';
-var BASE_UPLOAD_URL = '/upload/messages/';
+var router = express.Router();
+
+var baseUploadDir = path.join(CONF.baseUploadDir, 'messages');
+var baseUploadUrl = path.join(CONF.baseUploadUrl, 'messages');
 
 var ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 var generateId = function(length) {
@@ -21,6 +22,7 @@ upload.on('end', function (fileInfo, req, res) {
 	req.session.messagePart = req.session.messagePart || {};
 	
 	if(req.uploadedFileType == "video"){
+		console.log(fileInfo);
 		req.session.messagePart.video = {
 				title: fileInfo.originalName.split(".")[0],
 				filename: fileInfo.originalName,
@@ -100,10 +102,10 @@ router.post('/messages/:messageId/parts/:partNo/videos', function (req, res, nex
 	req.uploadedFileType = "video";
 	upload.fileHandler({
         uploadDir: function () {
-            return path.join(ROOT_PATH, BASE_UPLOAD_DIR, req.params.messageId, req.params.partNo); 
+            return path.join(baseUploadDir, req.params.messageId, req.params.partNo); 
         },
         uploadUrl: function () {
-            return  BASE_UPLOAD_URL + "/" + req.params.messageId+"/"+req.params.partNo;
+            return  path.join(baseUploadUrl, req.params.messageId, req.params.partNo);
         }
     })(req, res, next);
     
@@ -113,10 +115,10 @@ router.post('/messages/:messageId/parts/:partNo/audios', function (req, res, nex
 	req.uploadedFileType = "audio";
 	upload.fileHandler({
 		uploadDir: function () {
-			return path.join(ROOT_PATH, BASE_UPLOAD_DIR, req.params.messageId, req.params.partNo); 
+			return path.join(baseUploadDir, req.params.messageId, req.params.partNo); 
 		},
 		uploadUrl: function () {
-            return  BASE_UPLOAD_URL + "/" + req.params.messageId+"/"+req.params.partNo;
+            return  baseUploadUrl + req.params.messageId+"/"+req.params.partNo;
         }
 	})(req, res, next);
 	
@@ -126,10 +128,10 @@ router.post('/messages/:messageId/parts/:partNo/summary-ppts', function (req, re
 	req.uploadedFileType = "summary-ppt";
     upload.fileHandler({
         uploadDir: function () {
-            return path.join(ROOT_PATH, BASE_UPLOAD_DIR, req.params.messageId, req.params.partNo); 
+            return path.join(baseUploadDir, req.params.messageId, req.params.partNo); 
         },
         uploadUrl: function () {
-            return  BASE_UPLOAD_URL + "/" + req.params.messageId+"/"+req.params.partNo;
+            return  baseUploadUrl + req.params.messageId+"/"+req.params.partNo;
         }
     })(req, res, next);
 
@@ -139,10 +141,10 @@ router.post('/messages/:messageId/parts/:partNo/summary-images', function (req, 
 	req.uploadedFileType = "summary-images";
     upload.fileHandler({
         uploadDir: function () {
-            return path.join(ROOT_PATH, BASE_UPLOAD_DIR, req.params.messageId, req.params.partNo); 
+            return path.join(baseUploadDir, req.params.messageId, req.params.partNo); 
         },
         uploadUrl: function () {
-            return  BASE_UPLOAD_URL + "/" + req.params.messageId+"/"+req.params.partNo;
+            return  path.join(baseUploadUrl, req.params.messageId, req.params.partNo);
         }
     })(req, res, next);
 
