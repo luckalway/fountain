@@ -79,6 +79,7 @@ router.get('/messages/:id', function(req, res, next) {
 					var messageParts = [];
 					body.rows.forEach(function(doc) {
 						doc.value.uploaded = true;
+						console.log(doc.value);
 						messageParts.push(doc.value);
 					});
 					for (var i = messageParts.length; i < messageBody.countOfParts; i++) {
@@ -149,11 +150,6 @@ router.post('/messages/:messageId/parts/:partNo/summary-images', function (req, 
         }
     })(req, res, next);
 
-});
-
-router.get('/messages/create', function(req, res, next) {
-	req.session.message = req.session.message || {id:(new Date()).getTime()};
-	res.render('admin/messages/message-create', {messageId:req.session.message.id});
 });
 
 router.get('/messages/new', function(req, res, next) {

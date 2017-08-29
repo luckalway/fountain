@@ -106,8 +106,8 @@
 					<div class="panel-body">
 					<% if(messageParts[i].uploaded){ %>
 						<% if (messageParts[i].summary.type=='image') { %>
-							<% for (var i=0;i<messageParts[i].summary.images.length;i++){ %>
-							  <img src="<%=messageParts[i].summary.images[i].url%>"/>
+							<% for (var k=0;k<messageParts[i].summary.images.length;k++){ %>
+							  <img src="<%=messageParts[i].summary.images[k].url%>"/>
 						    <% } %> 
 						<% } else if (messageParts[i].summary.type=='ppt') { %>
 							(点击下载讲章PPT)&nbsp;<a href="<%=messageParts[i].summary.ppt.url%>"><%=messageParts[i].summary.ppt.name%></a>
