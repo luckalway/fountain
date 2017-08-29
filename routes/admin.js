@@ -2,7 +2,8 @@ var express = require('express');
 var upload = require('../my_node_modules/jquery-file-upload-middleware');
 var path = require('path');
 var fs = require("fs");
-var merge = require('merge')
+var merge = require('merge');
+var moment = require('moment');
 
 var router = express.Router();
 
@@ -73,7 +74,7 @@ router.get('/messages/:id', function(req, res, next) {
 		couchdb.get(messageId, {
 			revs_info : true
 		}, function(err, messageBody) {
-			couchdb.view("message_parts", "message_part", {keys:[messageId]}, function(err, body) {
+			couchdb.view("message_parts", "by_message_id", {keys:[messageId]}, function(err, body) {
 				if (!err) {
 					var messageParts = [];
 					body.rows.forEach(function(doc) {
@@ -181,10 +182,11 @@ router.post('/messages/:messageId/parts', function(req, res, next) {
 });
 
 router.get('/messages', function(req, res, next) {
-	couchdb.view("messages", "message", function(err, body) {
+	couchdb.view("messages", "by_created_date", {descending:true}, function(err, body) {
 		if (!err) {
 			var docs = [];
 			body.rows.forEach(function(doc) {
+				doc.value.createdDate = moment(doc.value.createdDate).format('YYYY-MM-DD');
 				docs.push(doc.value);
 			});
 			res.render('admin/messages/messages', { messages: docs });
