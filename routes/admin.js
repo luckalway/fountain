@@ -165,8 +165,9 @@ router.post('/messages', function(req, res, next) {
 	req.body.createdDate = Date.parse(new Date());
 	req.body.modifiedDate= Date.parse(new Date());
 	
-	couchdb.insert(merge(req.body, {table:"message", _id:generateId(8)}));
-	res.redirect('/admin/messages');
+	var id = generateId(8);
+	couchdb.insert(merge(req.body, {table:"message", _id:id}));
+	res.redirect('/admin/messages/' + id);
 });
 
 router.post('/messages/:messageId/parts', function(req, res, next) {
@@ -178,7 +179,7 @@ router.post('/messages/:messageId/parts', function(req, res, next) {
 		modifiedDate: Date.parse(new Date())
 	}));
 	
-	res.redirect('/admin/messages');
+	res.redirect('/admin/messages/' + req.body.messageId);
 });
 
 router.get('/messages', function(req, res, next) {
