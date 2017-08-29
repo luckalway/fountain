@@ -119,7 +119,7 @@ router.post('/messages/:messageId/parts/:partNo/audios', function (req, res, nex
 			return path.join(baseUploadDir, req.params.messageId, req.params.partNo); 
 		},
 		uploadUrl: function () {
-            return  baseUploadUrl + req.params.messageId+"/"+req.params.partNo;
+            return path.join(baseUploadUrl, req.params.messageId, req.params.partNo);
         }
 	})(req, res, next);
 	
@@ -132,7 +132,7 @@ router.post('/messages/:messageId/parts/:partNo/summary-ppts', function (req, re
             return path.join(baseUploadDir, req.params.messageId, req.params.partNo); 
         },
         uploadUrl: function () {
-            return  baseUploadUrl + req.params.messageId+"/"+req.params.partNo;
+            return path.join(baseUploadUrl, req.params.messageId, req.params.partNo);
         }
     })(req, res, next);
 
@@ -179,6 +179,7 @@ router.post('/messages/:messageId/parts', function(req, res, next) {
 		modifiedDate: Date.parse(new Date())
 	}));
 	
+	req.session.messagePart = null;
 	res.redirect('/admin/messages/' + req.body.messageId);
 });
 
