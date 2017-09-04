@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title><%=message.title%></title>
+<title><%=message.video.title%></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <% include include/script.html %>
@@ -29,7 +29,11 @@
 	<div class="bootstrap-iso">
 		<div class="container-fluid">
 			<div class="videos-container" style="margin-top: 30px; text-align: center;">
-				<video src="<%=message.video.url%>" width="900px;" controls="controls">您的浏览器不支持 video 标签。
+				<video src="" width="900px;" controls="controls">
+				  <source src="<%=message.video.url%>" type="video/mp4"/>	
+				  <source src="<%=message.video.url%>" type="video/webm"/>
+			      <source src="<%=message.video.url%>" type="video/ogg"/>
+			  	      您的浏览器不支持 video 标签。
 				</video>
 			</div>
 		</div>
