@@ -100,6 +100,11 @@ router.get('/messages/:id', function(req, res, next) {
 	}
 });
 
+router.get('/download/:messageId/:partNo/:fileName', function(req, res) {
+	var file = path.join(baseUploadDir, req.params.messageId, req.params.partNo, req.params.fileName); 
+	res.download(file, req.params.fileName);    
+});
+
 router.post('/messages/:messageId/parts/:partNo/videos', function (req, res, next) {
 	req.uploadedFileType = "video";
 	upload.fileHandler({
@@ -190,8 +195,6 @@ router.get('/messages', function(req, res, next) {
 				messageIds.push(doc.value._id);
 			});
 			
-			console.log(messageIds);
-
 			couchdb.view("message_parts", "by_message_id", {keys:messageIds}, function(err, body) {
 				if (!err) {
 					var messageParts = [];

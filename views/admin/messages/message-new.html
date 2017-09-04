@@ -6,12 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <% include ../../include/script.html %>
-<link href="/framework/jquery.uploadfile/uploadfile.css" rel="stylesheet">
-<link href="/framework/bootstrap.wizard/bwizard.min.css" rel="stylesheet">
-
-<script src="/framework/jquery.uploadfile/jquery.uploadfile.min.js"></script>
-<script src="/framework/bootstrap.wizard/bwizard.js"></script>
-<script src="/framework/jquery.cookie.min.js"></script>
 
 <style type="text/css">
 .label, .badge {
@@ -46,10 +40,12 @@
 								<option value="fuyin">福音</option>
 								<option value="zaojiu">造就</option>
 								<option value="chajing">查经</option>
-							</select> &nbsp; <label class="control-label " for="date"> 讲道日期 ：</label> <input class="form-control date" id="date"
+								<option value="zaipei">教师栽培</option>
+								<option value="guanmo">观摩聚会</option>
+							</select> &nbsp; <label class="control-label " for="date">讲道日期 ：</label> <input class="form-control date" id="date"
 								name="date" readonly="readonly" type="text" style="width: auto; display: inline-block;" />&nbsp; &nbsp; <label
-								class="control-label " for="countOfParts"> 分几段推送： </label> <input class="form-control" id="countOfParts"
-								name="countOfParts" type="number" style="width: auto; display: inline-block;" value="1" max="20" />&nbsp;
+								class="control-label " for="countOfParts"> 分几段推送：<span class="asteriskField"> * </span> </label> <input class="form-control" id="countOfParts"
+								name="countOfParts" type="number" style="width: auto; display: inline-block;" required="required" max="20" re/>&nbsp;
 						</div>
 					</div>
 				</div>

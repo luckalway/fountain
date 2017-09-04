@@ -110,7 +110,7 @@
 							  <img src="<%=messageParts[i].summary.images[k].url%>"/>
 						    <% } %> 
 						<% } else if (messageParts[i].summary.type=='ppt') { %>
-							(点击下载讲章PPT)&nbsp;<a href="<%=messageParts[i].summary.ppt.url%>"><%=messageParts[i].summary.ppt.name%></a>
+							(点击下载讲章PPT)&nbsp;<a href="/admin/download/<%=messageParts[i].messageId%>/<%=messageParts[i].partNo%>/<%=messageParts[i].summary.ppt.name%>"><%=messageParts[i].summary.ppt.name%></a>
 						<% } else {%>
 							<%=messageParts[i].summary || message.summary%>
 						<% } %>
@@ -131,7 +131,7 @@
 							<h3 class="panel-title">讲台音频</h3>
 						</div>
 						<div class="panel-body">
-							<a target="_blank" id="audio-url" href="<%=messageParts[i].audio.url%>">下载音频</a>
+							<a target="_blank" id="audio-url" href="/admin/download/<%=messageParts[i].messageId%>/<%=messageParts[i].partNo%>/<%=messageParts[i].audio.filename%>">下载音频</a>
 						</div>
 					</div>
 					<% } %>
