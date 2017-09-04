@@ -29,12 +29,16 @@
 						<div class="thumbnail" style="padding: 12px;">
 							<a href="messages/<%=messages[j]._id%>"><%=messages[j].title%></a> 
 							<br>
-							<span class="label label-primary">
-							创建日期：<%=messages[j].createdDate%></span>
-							<span class="label label-success">上传进度:1/<%=messages[j].countOfParts%></span>
+							<span class="label label-primary">创建日期：<%=messages[j].createdDate%></span>
+							<span class="label label-success">上传进度:<%=messages[j].countOfUploaded%>/<%=messages[j].countOfParts%></span><br>
+							<span class="label label-info">推送日期：
+							<%for (var k=0;k<messages[j].publishDates.length;k++){%>
+								<%=messages[j].publishDates[k]%>&nbsp;|
+							<% } %> 		
+							</span>
 						</div>
 					</div>
-					<%}%> 
+					<% } %> 
 			</div>
 			<%}%> 
 		</div>

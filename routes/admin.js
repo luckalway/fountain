@@ -182,12 +182,38 @@ router.post('/messages/:messageId/parts', function(req, res, next) {
 router.get('/messages', function(req, res, next) {
 	couchdb.view("messages", "by_created_date", {descending:true}, function(err, body) {
 		if (!err) {
-			var docs = [];
+			var docsMap = {};
+			var messageIds = [];
 			body.rows.forEach(function(doc) {
 				doc.value.createdDate = moment(doc.value.createdDate).format('YYYY-MM-DD');
-				docs.push(doc.value);
+				docsMap[doc.value._id] = doc.value;
+				messageIds.push(doc.value._id);
 			});
-			res.render('admin/messages/messages', { messages: docs });
+			
+			console.log(messageIds);
+
+			couchdb.view("message_parts", "by_message_id", {keys:messageIds}, function(err, body) {
+				if (!err) {
+					var messageParts = [];
+					body.rows.forEach(function(doc) {
+						if(!docsMap[doc.value.messageId]['countOfUploaded']){
+							docsMap[doc.value.messageId]['countOfUploaded'] = 0;
+							docsMap[doc.value.messageId]['publishDates'] = [];
+						};
+						docsMap[doc.value.messageId]['countOfUploaded']++;
+						docsMap[doc.value.messageId]['publishDates'].push(doc.value.publishDate);
+					});
+					
+					var docs = [];
+					for(var key in docsMap){
+						docsMap[key]['publishDates'] = docsMap[key]['publishDates'].sort();
+						docs.push(docsMap[key]);
+					}
+					res.render('admin/messages/messages', { messages: docs });
+				}
+			});	
+		
+			
 		}
 	});	
 });
