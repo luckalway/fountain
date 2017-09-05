@@ -6,7 +6,10 @@
 	content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
 <meta charset=UTF-8>
 <meta name=format-detection content="telephone=no, email=no">
-<title><%=message.video.title%></title> <% include include/script.html %>
+<title><%=message.title%>(<%=currentPart.partNo%>/<%=message.countOfParts%>)</title>
+<link href="/framework/videojs/video-js.css" rel="stylesheet">
+<% include include/script.html %>
+
 <style type="text/css">
 .videos-container .video {
 	background-color: gray;
@@ -15,10 +18,6 @@
 	float: left;
 }
 
-.row {
-	padding-top: 15px;
-	clear: both;
-}
 </style>
 
 <script type="text/javascript">
@@ -26,20 +25,70 @@
 </script>
 </head>
 <body>
-	<!-- HTML Form (wrapped in a .bootstrap-iso div) -->
-	<div class="bootstrap-iso">
-		<div class="container-fluid">
-			<div class="videos-container" style="margin-top: 30px; text-align: center;">
-				<video style="width: 100%;" controls="controls">
-					<source src="<%=message.video.url%>" type="video/mp4" />
-					<source src="<%=message.video.url%>" type="video/webm" />
-					<source src="<%=message.video.url%>" type="video/ogg" />
-					您的浏览器不支持 video 标签。
-				</video>
-			</div>
+	<div class="container-fluid">
+		<div class="videos-container" style="margin-top: 30px; text-align: center;">
+			<video id="message-video" style="width: 100%;" class="video-js vjs-default-skin" controls="controls">
+				<source src="<%=currentPart.video.url%>" type="video/mp4" />
+				<source src="<%=currentPart.video.url%>" type="video/webm" />
+				<source src="<%=currentPart.video.url%>" type="video/ogg" />
+				您的浏览器不支持 video标签。
+			</video>
 		</div>
 	</div>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">视频列表</h3>
+		</div>
+		<div class="panel-body">
+			<ul class="list-group">
+			  <%for (var i=0;i<messageParts.length ;i++){%>	
+			  <li class="list-group-item <%if(messageParts[i]._id == currentPart._id){%>active<%}%>">
+			  	<%=message.title%>(<%=messageParts[i].partNo%>/<%=message.countOfParts%>)
+			  	<div style="float: right;">
+			  		<span data-video-src="<%=messageParts[i].video.url%>" class="glyphicon-class glyphicon glyphicon-play"></span>&nbsp;
+			  		<span class="glyphicon-class glyphicon glyphicon-pause"></span>&nbsp;
+			  		<span class="glyphicon-class glyphicon glyphicon-stop"></span>&nbsp;
+			  	</div>	
+			  </li>
+			  <% } %>
+			</ul>
+		</div>
+	</div>
+	<script src="/framework/videojs/video.js"></script>
+	<script type="text/javascript">
+	var player = videojs('message-video');
+	player.ready(function(){
+		$(".glyphicon-play").click(function(){
+			if($(this).parents('.list-group-item').hasClass('active')&&!player.paused())
+				return false;
+			
+			player.pause();
+			$(".list-group-item").removeClass('active');
+			$(this).parents('.list-group-item').addClass('active');
+			
+			player.src([
+	            {type: "video/mp4", src: $(this).data('video-src')},
+	            {type: "video/webm", src: $(this).data('video-src')},
+	            {type: "video/ogg", src: $(this).data('video-src')}
+			]);
+			
+			player.play();
+		});
+		
+		$(".glyphicon-pause").click(function(){
+			if(!$(this).parents('.list-group-item').hasClass('active'))
+				return false;	
+			player.pause();
+		});
+		
+		$(".glyphicon-stop").click(function(){
+			if(!$(this).parents('.list-group-item').hasClass('active'))
+				return false;
+			player.pause();     
+			player.currentTime(0); 
+		});
+	});
+</script>
 </body>
-
 
 </html>
