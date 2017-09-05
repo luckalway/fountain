@@ -17,8 +17,8 @@ router.get('/messages/:resourceId/video', function(req, res, next) {
 	} 
  
 	couchdb.view("messages", "by_message_id", {
-		startKey:[messageId],
-		endKey:[messageId, {}]
+		startkey:[messageId],
+		endkey:[messageId, {}]
 	}, function(err, body) {
 		if (!err) {
 			var messageBody, currentPart;

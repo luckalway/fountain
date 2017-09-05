@@ -27,7 +27,7 @@
 <body>
 	<div class="container-fluid">
 		<div class="videos-container" style="margin-top: 30px; text-align: center;">
-			<video id="message-video" style="width: 100%;" class="video-js vjs-default-skin" controls="controls">
+			<video id="message-video" style="width: 100%;height: auto;position: relative;" class="video-js vjs-default-skin" controls="controls">
 				<source src="<%=currentPart.video.url%>" type="video/mp4" />
 				<source src="<%=currentPart.video.url%>" type="video/webm" />
 				<source src="<%=currentPart.video.url%>" type="video/ogg" />
@@ -42,12 +42,9 @@
 		<div class="panel-body">
 			<ul class="list-group">
 			  <%for (var i=0;i<messageParts.length ;i++){%>	
-			  <li class="list-group-item <%if(messageParts[i]._id == currentPart._id){%>active<%}%>">
+			  <li class="list-group-item <%if(messageParts[i]._id == currentPart._id){%>active<%}%>" data-video-src="<%=messageParts[i].video.url%>">
 			  	<%=message.title%>(<%=messageParts[i].partNo%>/<%=message.countOfParts%>)
 			  	<div style="float: right;">
-			  		<span data-video-src="<%=messageParts[i].video.url%>" class="glyphicon-class glyphicon glyphicon-play"></span>&nbsp;
-			  		<span class="glyphicon-class glyphicon glyphicon-pause"></span>&nbsp;
-			  		<span class="glyphicon-class glyphicon glyphicon-stop"></span>&nbsp;
 			  	</div>	
 			  </li>
 			  <% } %>
@@ -58,35 +55,21 @@
 	<script type="text/javascript">
 	var player = videojs('message-video');
 	player.ready(function(){
-		$(".glyphicon-play").click(function(){
-			if($(this).parents('.list-group-item').hasClass('active')&&!player.paused())
+		$(".list-group-item").click(function(){
+			if($(this).hasClass('active')&&!player.paused())
 				return false;
 			
 			player.pause();
 			$(".list-group-item").removeClass('active');
-			$(this).parents('.list-group-item').addClass('active');
+			$(this).addClass('active');
 			
 			player.src([
 	            {type: "video/mp4", src: $(this).data('video-src')},
 	            {type: "video/webm", src: $(this).data('video-src')},
 	            {type: "video/ogg", src: $(this).data('video-src')}
 			]);
-			
-			player.play();
 		});
 		
-		$(".glyphicon-pause").click(function(){
-			if(!$(this).parents('.list-group-item').hasClass('active'))
-				return false;	
-			player.pause();
-		});
-		
-		$(".glyphicon-stop").click(function(){
-			if(!$(this).parents('.list-group-item').hasClass('active'))
-				return false;
-			player.pause();     
-			player.currentTime(0); 
-		});
 	});
 </script>
 </body>
