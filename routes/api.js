@@ -3,7 +3,7 @@ var router = express.Router();
 var path = require('path');
 var fs = require("fs");
 
-var baseUploadUrl = CONF.baseUploadUrl;
+var baseUploadUrl = CONF.videoSourceUrl;
 
 router.get('/messages', function(req, res, next) {
 	couchdb.view("messages", "by_message_id", function(err, body) {
