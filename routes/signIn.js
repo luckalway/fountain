@@ -10,12 +10,14 @@ var accounts = {
 	'meigong' : {
 		pwd : 'mgdpy@2017',
 		role : 'meigong',
-		name : '美工001'
+		name : '美工001',
+		username: 'meigong'
 	},
 	'shipin' : {
 		pwd : 'spdpy@2017',
 		role : 'shipin',
-		name : '视频001'
+		name : '视频001',
+		username: 'shipin'
 	}
 }
 

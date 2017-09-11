@@ -16,6 +16,7 @@
     "serve-favicon": "~2.4.2",
     "express-session": "~1.15.5",
     "merge": "~1.2.0",
-    "moment":"*"
+    "moment":"*",
+    "log":"1.4.0"
   }
 }

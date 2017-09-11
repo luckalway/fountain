@@ -23,7 +23,6 @@ upload.on('end', function (fileInfo, req, res) {
 	req.session.messagePart = req.session.messagePart || {};
 	
 	if(req.uploadedFileType == "video"){
-		console.log(fileInfo);
 		req.session.messagePart.video = {
 				title: fileInfo.originalName.split(".")[0],
 				filename: fileInfo.originalName,
@@ -79,7 +78,6 @@ router.get('/messages/:id', function(req, res, next) {
 					var messageParts = [];
 					body.rows.forEach(function(doc) {
 						doc.value.uploaded = true;
-						console.log(doc.value);
 						messageParts.push(doc.value);
 					});
 					for (var i = messageParts.length; i < messageBody.countOfParts; i++) {
@@ -182,6 +180,23 @@ router.post('/messages/:messageId/parts', function(req, res, next) {
 	
 	req.session.messagePart = null;
 	res.redirect('/admin/messages/' + req.body.messageId);
+});
+
+router.put('/messages/:messageId/parts/:partId', function(req, res, next) {
+	couchdb.get(req.body.pk, {
+		revs_info : true
+	}, function(err, body) {
+		body[req.body.name] = req.body.value;
+		delete body['_revs_info'];
+		couchdb.update(body, body._id, function(err, response) {
+			log.info(req.session.signedIn.username + ' updated the '
+					+ req.body.name + ' to "' + req.body.value
+					+ '" for messagePart of id ' + req.params.partId);
+			res.status(200).end();
+		});
+	});
+
+	
 });
 
 router.get('/messages', function(req, res, next) {

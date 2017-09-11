@@ -6,6 +6,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <% include ../../include/script.html %>
+<% if(signedIn.role == 'shipin'){ %>
+<link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+<script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+<% } %>
 <style type="text/css">
 .return {
 	margin: 10px;
@@ -99,7 +103,11 @@
 						<div class="panel-heading">
 							<h3 class="panel-title">经文</h3>
 						</div>
-						<div class="panel-body"><pre><%=messageParts[i].scripture || message.scripture %></pre></div>
+						<div class="panel-body">
+							<pre  id="scripture" data-type="textarea" data-pk="<%=messageParts[i]._id%>" data-inputclass="input-xlarge" 
+								data-url="<%=messageParts[i].messageId%>/parts/<%=messageParts[i]._id%>" class="editable"><%=messageParts[i].scripture || message.scripture %>
+							</pre>
+						</div>
 					</div>
 					<div class="panel panel-info">
 					<div class="panel-heading">
@@ -114,7 +122,7 @@
 						<% } else if (messageParts[i].summary.type=='ppt') { %>
 							(点击下载讲章PPT)&nbsp;<a href="/admin/download/<%=messageParts[i].messageId%>/<%=messageParts[i].partNo%>/<%=messageParts[i].summary.ppt.name%>"><%=messageParts[i].summary.ppt.name%></a>
 						<% } else {%>
-							<pre><%=messageParts[i].summary || message.summary%></pre>
+							<pre id="summary" data-type="textarea" data-pk="<%=messageParts[i]._id%>" data-inputclass="input-xlarge" data-url="<%=messageParts[i].messageId%>/parts/<%=messageParts[i]._id%>" class="editable"><%=messageParts[i].summary || message.summary%></pre>
 						<% } %>
 					<% } %>	
 					</div>
@@ -137,10 +145,7 @@
 					<% if (messageParts[i].audio) { %>
 					<div class="panel panel-info">
 						<div class="panel-heading">
-							<h3 class="panel-title">讲台音频</h3>
-						</div>
-						<div class="panel-body">
-							<a target="_blank" id="audio-url" href="/admin/download/<%=messageParts[i].messageId%>/<%=messageParts[i].partNo%>/<%=messageParts[i].audio.filename%>">下载音频</a>
+							<h3 class="panel-title"><a target="_blank" id="audio-url" href="/admin/download/<%=messageParts[i].messageId%>/<%=messageParts[i].partNo%>/<%=messageParts[i].audio.filename%>">下载音频</a></h3>
 						</div>
 					</div>
 					<% } %>

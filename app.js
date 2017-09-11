@@ -13,7 +13,17 @@ global.ROOT_PATH = __dirname;
 global.nano = require('nano')(env.couchdb.url);
 global.couchdb = nano.db.use(env.couchdb.db);
 global.CONF = env.conf;
+global.Log = require('log');
+global.log = new Log('info');
 
+global.couchdb.update = function(obj, key, callback) {
+    var db = this;
+
+    db.get(key, function (error, existing) { 
+        if(!error) obj._rev = existing._rev;
+        db.insert(obj, key, callback);
+    });
+}
 
 var index = require('./routes/index');
 var admin = require('./routes/admin');

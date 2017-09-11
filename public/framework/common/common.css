@@ -9,3 +9,7 @@ pre {
 	white-space: -o-pre-wrap;
 	word-wrap: break-word;
 }
+
+.input-xlarge{
+	width: 500px;
+}
