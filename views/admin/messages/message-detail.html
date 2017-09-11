@@ -92,8 +92,10 @@
 						<div class="panel-heading">
 							<h3 class="panel-title">标题：</h3>
 						</div>
-						<div class="panel-body">【讲台】<%=message.title%>(<%=i+1%>/<%=message.countOfParts%>)</div>
-		
+						<div class="panel-body">
+						【讲台】<%=message.title%>(<%=i+1%>/<%=message.countOfParts%>)
+						</div>
+						
 						<div class="panel-heading">
 							<h3 class="panel-title">经文</h3>
 						</div>
@@ -116,10 +118,17 @@
 						<% } %>
 					<% } %>	
 					</div>
-					
 					<div class="panel panel-info">
 						<div class="panel-heading">
-							<h3 class="panel-title">讲台视频URL</h3>
+							<h3 class="panel-title">小程序路径</h3>
+						</div>
+						<div class="panel-body">
+							<pre>pages/message/message?partId=<%=messageParts[i]._id%></pre>
+						</div>
+					</div>
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title">视频播放地址</h3>
 						</div>
 						<div class="panel-body">
 							<a target="_blank" id="video-player-url" href="<%=videoPlayerUrl%>/messages/<%=messageParts[i]._id%>/video"><%=videoPlayerUrl%>/messages/<%=messageParts[i]._id%>/video</a>
