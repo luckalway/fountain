@@ -193,16 +193,14 @@ router.get('/messages', function(req, res, next) {
 				doc.value.createdDate = moment(doc.value.createdDate).format('YYYY-MM-DD');
 				docsMap[doc.value._id] = doc.value;
 				messageIds.push(doc.value._id);
+				docsMap[doc.value._id]['countOfUploaded'] = 0;
+				docsMap[doc.value._id]['publishDates'] = [];
 			});
 			
 			couchdb.view("message_parts", "by_message_id", {keys:messageIds}, function(err, body) {
 				if (!err) {
 					var messageParts = [];
 					body.rows.forEach(function(doc) {
-						if(!docsMap[doc.value.messageId]['countOfUploaded']){
-							docsMap[doc.value.messageId]['countOfUploaded'] = 0;
-							docsMap[doc.value.messageId]['publishDates'] = [];
-						};
 						docsMap[doc.value.messageId]['countOfUploaded']++;
 						docsMap[doc.value.messageId]['publishDates'].push(doc.value.publishDate);
 					});

@@ -6,5 +6,6 @@ exports.couchdb = {
 exports.conf = {
 	baseUploadDir : __dirname + '/public/upload/',
 	baseUploadUrl : '/upload/',
-	videoPlayerUrl : 'http://localhost:3000'
+	videoPlayerUrl : 'http://localhost:3000',
+	videoSourceUrl : 'http://video.8qiu.cn'
 }

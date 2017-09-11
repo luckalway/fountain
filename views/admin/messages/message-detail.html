@@ -55,13 +55,13 @@
 				<div class="panel-heading">
 					<h3 class="panel-title">经文</h3>
 				</div>
-				<div class="panel-body"><%=message.scripture%></div>
+				<div class="panel-body"><pre><%=message.scripture%></pre></div>
 			</div>
 			<div class="panel panel-info">
 				<div class="panel-heading">
 					<h3 class="panel-title">讲章</h3>
 				</div>
-				<div class="panel-body"><%=message.summary%></div>
+				<div class="panel-body"><pre><%=message.summary%></pre></div>
 			</div>
 		</div>
 
@@ -97,7 +97,7 @@
 						<div class="panel-heading">
 							<h3 class="panel-title">经文</h3>
 						</div>
-						<div class="panel-body"><%=messageParts[i].scripture || message.scripture %></div>
+						<div class="panel-body"><pre><%=messageParts[i].scripture || message.scripture %></pre></div>
 					</div>
 					<div class="panel panel-info">
 					<div class="panel-heading">
@@ -112,7 +112,7 @@
 						<% } else if (messageParts[i].summary.type=='ppt') { %>
 							(点击下载讲章PPT)&nbsp;<a href="/admin/download/<%=messageParts[i].messageId%>/<%=messageParts[i].partNo%>/<%=messageParts[i].summary.ppt.name%>"><%=messageParts[i].summary.ppt.name%></a>
 						<% } else {%>
-							<%=messageParts[i].summary || message.summary%>
+							<pre><%=messageParts[i].summary || message.summary%></pre>
 						<% } %>
 					<% } %>	
 					</div>
