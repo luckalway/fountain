@@ -9,10 +9,20 @@ router.get('/messages', function(req, res, next) {
 	couchdb.view("messages", "by_message_id", function(err, body) {
 		if (!err) {
 			var docs = [];
+			var messages = [];
+			var currentMessage;
+			var currentParts = [];
 			body.rows.forEach(function(doc) {
-				docs.push(doc.value);
+				if (doc.value.table == 'message') {
+					currentMessage = doc.value;
+					currentMessage.parts = [];
+					messages.push(currentMessage);
+				} else {
+					currentMessage.parts.push(doc.value);
+				}
+				
 			});
-			res.send(docs);
+			res.send(messages);
 			res.status(200).end();
 		}
 	});
@@ -34,11 +44,11 @@ router.get('/messages/:id/videos', function(req, res, next) {
 			for (var i = 1; i < body.rows.length; i++) {
 				var part = body.rows[i].value;
 				messageVideos.push({
-					id :  part._id,
+					id : part._id,
 					videoUrl : baseUploadUrl + part.video.url,
 					title : message.title + '(' + part.partNo + '/'
 							+ message.countOfParts + ')',
-					date:message.date
+					date : message.date
 				});
 			}
 
