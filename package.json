@@ -17,6 +17,7 @@
     "express-session": "~1.15.5",
     "merge": "~1.2.0",
     "moment":"*",
-    "log":"1.4.0"
+    "log":"1.4.0",
+    "fluent-ffmpeg":"2.1.2"
   }
 }

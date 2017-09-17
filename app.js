@@ -7,9 +7,9 @@ var bodyParser = require('body-parser');
 var ejs = require('ejs');
 var session = require('express-session');
 
+global.ROOT_PATH = __dirname;
 var app = express();
 var env = require('./env-'+app.get('env'));
-global.ROOT_PATH = __dirname;
 global.nano = require('nano')(env.couchdb.url);
 global.couchdb = nano.db.use(env.couchdb.db);
 global.CONF = env.conf;
