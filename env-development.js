@@ -1,11 +1,11 @@
 exports.couchdb = {
-	url : 'http://user:pmuser@10.2.1.80:5984',
+	url : 'http://admin:sadmin28@119.97.184.154:5988',
 	db : 'fountain'
 }
 
 exports.conf = {
 	baseUploadDir : __dirname + '/public/upload/',
 	baseUploadUrl : '/upload/',
-	videoPlayerUrl : 'http://localhost:3000',
+	videoPlayerUrl : 'http://video.8qiu.cn',
 	videoSourceUrl : 'http://video.8qiu.cn'
 }
