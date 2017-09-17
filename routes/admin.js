@@ -4,6 +4,7 @@ var path = require('path');
 var fs = require("fs");
 var merge = require('merge');
 var moment = require('moment');
+var ffmpeg = require('fluent-ffmpeg');
 
 var router = express.Router();
 
