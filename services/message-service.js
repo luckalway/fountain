@@ -1,33 +1,22 @@
 var moment = require('moment');
 var merge = require('merge');
 
-exports.getMessagesSortedById = function(callback){
-	couchdb.view("messages", "by_message_id", function(err, body) {
+exports.getMessageWithoutParts = function(callback){
+	couchdb.view("messages", "by_created_date", {descending:true}, function(err, body) {
 		if(err){
 			callback(err);
 			return;
 		}
 		
 		var docs = [];
-		var messages = [];
-		var currentMessage;
-		var currentParts = [];
 		body.rows.forEach(function(doc) {
-			if (doc.value.table == 'message') {
-				currentMessage = doc.value;
-				currentMessage.parts = [];
-				messages.push(currentMessage);
-			} else {
-				currentMessage.parts.push(doc.value);
-			}
-			
+			docs.push(doc.value);
 		});
-		callback(null, body);
+		callback(null, docs);
 	});
-
 }
 
-exports.getMessagesSortedByCreatedDate = function(callback){
+exports.getMessages = function(callback){
 	couchdb.view("messages", "by_created_date", {descending:true}, function(err, body) {
 		if(err){
 			callback(err);
@@ -96,7 +85,14 @@ exports.getMessage = function (messageId, callback) {
 	});
 }
 
-exports.getMessageVideos = function(messageId , callback){
+exports.getMessageVideos = function(resourceId , callback){
+	var messageId;
+	if(/\w{8}_\d{1,2}/.test(resourceId)){
+		messageId = resourceId.split("_")[0]
+	} else {
+		messageId = resourceId;
+	}
+	
 	couchdb.view("messages", "by_message_id", {
 		startkey : [ messageId ],
 		endkey : [ messageId, {} ]
@@ -106,25 +102,24 @@ exports.getMessageVideos = function(messageId , callback){
 			return;
 		}
 		
-		if (body.rows.length == 0) {
-			res.send([]);
-			res.status(200).end();
-		}
-
-		var message = body.rows[0].value;
-		var messageVideos = [];
-		for (var i = 1; i < body.rows.length; i++) {
-			var part = body.rows[i].value;
-			messageVideos.push({
-				id : part._id,
-				videoUrl : baseUploadUrl + part.video.url,
-				title : message.title + '(' + part.partNo + '/'
-						+ message.countOfParts + ')',
-				date : message.date
-			});
-		}
-
-		callback(null, messageVideos);
+		var messageBody, currentPart;
+		var allMessageParts = [];
+		body.rows.forEach(function(doc) {
+			if(doc.value.table == 'message_part'){
+				var isBeforeToday = moment(doc.value.publishDate, "YYYY-MM-DD").isBefore(moment().add(1, 'days'),'day');
+				console.log(moment(doc.value.publishDate, "YYYY-MM-DD"),moment().add(1, 'days'))
+				if(isBeforeToday)
+					allMessageParts.push(doc.value);
+			} else if (doc.value.table == 'message'){
+				messageBody = doc.value;
+			}
+		});
+		
+		callback(null, {
+			message : messageBody,
+			currentPart: currentPart,
+			messageParts : allMessageParts
+		});
 	});
 
 }

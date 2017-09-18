@@ -176,7 +176,7 @@ router.put('/messages/:messageId/parts/:partId', function(req, res, next) {
 });
 
 router.get('/messages', function(req, res, next) {
-	messageService.getMessagesSortedByCreatedDate(function(err,body){
+	messageService.getMessages(function(err,body){
 		res.render('admin/messages/messages', { messages: body });
 	});
 });
