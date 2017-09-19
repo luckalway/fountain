@@ -2,3 +2,4 @@
 .project
 /.settings/
 /npm-debug.log
+/env-development.js

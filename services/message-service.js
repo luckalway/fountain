@@ -7,7 +7,7 @@ exports.getMessageWithoutParts = function(callback){
 			callback(err);
 			return;
 		}
-		
+
 		var docs = [];
 		body.rows.forEach(function(doc) {
 			docs.push(doc.value);
@@ -31,7 +31,7 @@ exports.getMessages = function(callback){
 			docsMap[doc.value._id]['countOfUploaded'] = 0;
 			docsMap[doc.value._id]['publishDates'] = [];
 		});
-		
+
 		couchdb.view("message_parts", "by_message_id", {keys:messageIds}, function(err, body) {
 			if(err){
 				callback(err);
@@ -43,15 +43,15 @@ exports.getMessages = function(callback){
 				docsMap[doc.value.messageId]['countOfUploaded']++;
 				docsMap[doc.value.messageId]['publishDates'].push(doc.value.publishDate);
 			});
-			
+
 			var docs = [];
 			for(var key in docsMap){
 				docsMap[key]['publishDates'] = docsMap[key]['publishDates'].sort();
 				docs.push(docsMap[key]);
 			}
 			callback(null, docs);
-		});	
-	});	
+		});
+	});
 
 }
 
@@ -63,13 +63,13 @@ exports.getMessage = function (messageId, callback) {
 			callback(err);
 			return;
 		}
-		
+
 		couchdb.view("message_parts", "by_message_id", {keys:[messageId]}, function(err, body) {
 			if(err){
 				callback(err);
 				return;
 			}
-			
+
 			messageBody.parts = [];
 			body.rows.forEach(function(doc) {
 				doc.value.uploaded = true;
@@ -81,7 +81,7 @@ exports.getMessage = function (messageId, callback) {
 				});
 			}
 			callback(null, messageBody);
-		});	
+		});
 	});
 }
 
@@ -92,7 +92,7 @@ exports.getMessageVideos = function(resourceId , callback){
 	} else {
 		messageId = resourceId;
 	}
-	
+
 	couchdb.view("messages", "by_message_id", {
 		startkey : [ messageId ],
 		endkey : [ messageId, {} ]
@@ -101,7 +101,7 @@ exports.getMessageVideos = function(resourceId , callback){
 			callback(err);
 			return;
 		}
-		
+
 		var messageBody, currentPart;
 		var allMessageParts = [];
 		body.rows.forEach(function(doc) {
@@ -114,7 +114,7 @@ exports.getMessageVideos = function(resourceId , callback){
 				messageBody = doc.value;
 			}
 		});
-		
+
 		callback(null, {
 			message : messageBody,
 			currentPart: currentPart,
@@ -127,7 +127,7 @@ exports.getMessageVideos = function(resourceId , callback){
 exports.createMessage = function(message, callback){
 	message.createdDate = Date.parse(new Date());
 	message.modifiedDate= Date.parse(new Date());
-	
+
 	var id = generateId(8);
 	couchdb.insert(merge(message, {table:"message", _id:id}), callback);
 }
@@ -135,7 +135,7 @@ exports.createMessage = function(message, callback){
 exports.createMessagePart = function(part, callback){
 	couchdb.insert(merge(part, {
 		_id: req.body.messageId + "_" + req.body.partNo,
-		table: "message_part", 
+		table: "message_part",
 		createdDate: Date.parse(new Date()),
 		modifiedDate: Date.parse(new Date())
 	}), callback);
@@ -152,5 +152,5 @@ exports.partiallyUpdateMessage = function(id, nameValues, callback){
 		couchdb.update(body, body._id, callback);
 	});
 
-	
+
 }
