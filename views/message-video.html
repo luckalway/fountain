@@ -19,30 +19,32 @@
 
 </head>
 <body>
-	<div class="container-fluid">
-		<div class="videos-container" style="margin-top: 30px; text-align: center;">
-			<video id="message-video" style="width: 100%;height: auto;position: relative;" class="video-js vjs-default-skin" controls="controls">
+	<div class="container col-sm-12 col-md-10 col-md-offset-1">
+		<div class="videos-container col-sm-12 col-md-12" style="margin-top: 30px;">
+			<video id="message-video" style="height: auto;position: relative;" poster="<%=currentPart.preview.url%>" class="video-js vjs-default-skin col-sm-12" controls="controls">
 				<source src="<%=currentPart.video.url%>" type="video/mp4" />
 				<source src="<%=currentPart.video.url%>" type="video/webm" />
 				<source src="<%=currentPart.video.url%>" type="video/ogg" />
 				您的浏览器不支持 video标签。
 			</video>
 		</div>
-	</div>
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h3 class="panel-title">视频列表</h3>
-		</div>
-		<div class="panel-body">
-			<ul class="list-group">
-			  <%for (var i=0;i<messageParts.length ;i++){%>	
-			  <li class="list-group-item <%if(messageParts[i]._id == currentPart._id){%>active<%}%>" data-video-src="<%=messageParts[i].video.url%>">
-			  	<%=message.title%>(<%=messageParts[i].partNo%>/<%=message.countOfParts%>)
-			  	<div style="float: right;">
-			  	</div>	
-			  </li>
-			  <% } %>
-			</ul>
+		<div class="clear"></div>
+		<br>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">视频列表</h3>
+			</div>
+			<div class="panel-body">
+				<ul class="list-group">
+				  <%for (var i=0;i<messageParts.length ;i++){%>	
+				  <li class="list-group-item <%if(messageParts[i]._id == currentPart._id){%>active<%}%>" data-video-src="<%=messageParts[i].video.url%>">
+				  	<%=message.title%>(<%=messageParts[i].partNo%>/<%=message.countOfParts%>)
+				  	<div style="float: right;">
+				  	</div>	
+				  </li>
+				  <% } %>
+				</ul>
+			</div>
 		</div>
 	</div>
 	<script src="/framework/videojs/video.js"></script>

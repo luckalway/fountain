@@ -19,35 +19,64 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		var isVideoUploaded = false;
-		$("#videoUploader").uploadFile({
-			uploadStr : "上传视频(mp4)",
-			allowedTypes: 'mp4',
-			extErrorStr: '格式不正确，只允许的格式：',
-			url : "/admin/messages/<%=messageId%>/parts/<%=partNo%>/videos",
-			fileName : "message-video",
-			onSuccess : function(files, data, xhr, pd) {
-				$("#message-form").slideDown("slow");
-				var data = JSON.parse(data);
-				var filename = data.files[0].originalName;
-				if(filename.split(".") == -1){
-					$("#title").val(filename);
-				}else{
-					$("#title").val(filename.split(".")[0]);
-				}
-				isVideoUploaded = true;
+		var uploadedFiles = {
+			previewImage: null,
+			video: null,
+			audio: null,
+			add: function(files){
+				var self = this;
+				files.forEach(function(file){
+					var simpleFile = {
+						url: file.url,
+						deleteUrl:file.deleteUrl
+					}
+					if(file.originalName.endsWith('jpg')||file.originalName.endsWith('png')){
+						self.previewImage = simpleFile;
+					}else if(file.originalName.endsWith('mp4')){
+						self.video = simpleFile;
+					}else if(file.originalName.endsWith('mp3')){
+						self.audio = simpleFile;
+					}
+				});
 			}
-		});
-
-		$("#audioUploader").uploadFile({
-			uploadStr : "上传音频(mp3)",
-			allowedTypes: 'mp3',
+		};
+		
+		$("#multiMediaUploader").uploadFile({
+			uploadStr : "上传视频(mp4)、音频(mp3)、预览图(png,jpg)",
+			dragdropWidth: '500px',
+			allowedTypes: 'mp4,mp3,jpg,png',
 			extErrorStr: '格式不正确，只允许的格式：',
-			url : "/admin/messages/<%=messageId%>/parts/<%=partNo%>/audios",
-			fileName : "message-audio",
+			url : "/admin/messages/<%=messageId%>/parts/<%=partNo%>/multi-media",
+			fileName : "multi-media",
+			sequential: true,
+			sequentialCount: 1,
 			onSuccess : function(files, data, xhr, pd) {
-				$("#message-form").slideDown("slow");
 				var data = JSON.parse(data);
+				uploadedFiles.add(data.files);
+			},
+			onSelect:function(files){
+				var errors = [];
+				for(var i=0;i<files.length;i++){
+					var file = files[i];
+					if(file.name.endsWith('jpg') || file.name.endsWith('png')){
+						if(uploadedFiles.previewImage){
+							errors.push("预览图已经存在");
+						}
+					}else if(file.name.endsWith('mp4')){
+						if(uploadedFiles.video){
+							errors.push("视频文件已经存在");
+						}
+					}else if(file.name.endsWith('mp3')){
+						if(uploadedFiles.audio){
+							errors.push("音频文件已经存在");
+						}
+					}
+				}
+				if(errors.length){
+					Yuan.skin.showError('alert-container','上传失败',errors.join(',') + ', 请重新选择文件！');
+				    return false; 
+				}
+				return true;
 			}
 		});
 
@@ -82,10 +111,10 @@
 		    	$('#country').suggestCountry();
 		    },
 		    onValidate : function($form) {
-		    	if(!isVideoUploaded){
+		    	if(!uploadedFiles.video){
 			        return {
-			          element : $('#videoUploader'),
-			          message : '讲道视频还未上传！ '
+			          element : $('#multiMediaUploader'),
+			          message : '视频还未上传！ '
 			        }
 		    	}
 		    },
@@ -99,9 +128,10 @@
 	  <h3>上传讲道信息 <small>第<%=partNo%>段</small></h3>
 	</div>
 	<div class="container-fluid">
+	    <div id="alert-container"></div>
 		<div class="row">
 			<div class="col-md-6 col-sm-6 col-xs-12">
-				<div id="videoUploader">上传视频</div> <div id="audioUploader">上传音频</div>
+				<div id="multiMediaUploader">上传视频</div>
 			</div>
 		</div>
 

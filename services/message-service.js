@@ -1,6 +1,15 @@
 var moment = require('moment');
 var merge = require('merge');
 
+var ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+var generateId = function(length) {
+  var rtn = '';
+  for (var i = 0; i < length; i++) {
+    rtn += ALPHABET.charAt(Math.floor(Math.random() * ALPHABET.length));
+  }
+  return rtn;
+}
+
 exports.getMessageWithoutParts = function(callback){
 	couchdb.view("messages", "by_created_date", {descending:true}, function(err, body) {
 		if(err){
@@ -75,16 +84,13 @@ exports.getMessage = function (messageId, callback) {
 				doc.value.uploaded = true;
 				messageBody.parts.push(doc.value);
 			});
-			for (var i = messageBody.parts.length; i < messageBody.countOfParts; i++) {
-				messageBody.parts.push({
-					uploaded: false
-				});
-			}
+			
 			callback(null, messageBody);
 		});
 	});
 }
 
+// @Deprecated
 exports.getMessageVideos = function(resourceId , callback){
 	var messageId;
 	if(/\w{8}_\d{1,2}/.test(resourceId)){
@@ -129,12 +135,12 @@ exports.createMessage = function(message, callback){
 	message.modifiedDate= Date.parse(new Date());
 
 	var id = generateId(8);
-	couchdb.insert(merge(message, {table:"message", _id:id}), callback);
+	couchdb.insert(merge(message, {table:"message", _id:id}), callback(null, id));
 }
 
 exports.createMessagePart = function(part, callback){
 	couchdb.insert(merge(part, {
-		_id: req.body.messageId + "_" + req.body.partNo,
+		_id: part.messageId + "_" + part.partNo,
 		table: "message_part",
 		createdDate: Date.parse(new Date()),
 		modifiedDate: Date.parse(new Date())

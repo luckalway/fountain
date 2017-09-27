@@ -23,8 +23,12 @@ router.get('/messages/:resourceId/video', function(req, res, next) {
 		if (!err) {
 			var messageBody, currentPart;
 			var allMessageParts = [];
+			var defaultPreview = null;
 			body.rows.forEach(function(doc) {
 				if(doc.value.table == 'message_part'){
+					if(doc.value.preview){
+						defaultPreview = doc.value.preview;
+					}
 					allMessageParts.push(doc.value);
 				}else if(doc.value.table == 'message'){
 					messageBody = doc.value;
@@ -39,6 +43,7 @@ router.get('/messages/:resourceId/video', function(req, res, next) {
 				var isBeforeToday = moment(allMessageParts[i].publishDate, "YYYY-MM-DD").endOf('day').isBefore(new Date());
 				var isBeforeOrSameCurrent = parseInt(currentPart.partNo) >= parseInt(allMessageParts[i].partNo);
 				if(isBeforeToday || isBeforeOrSameCurrent){
+					allMessageParts[i].preview = defaultPreview;
 					displayedMessageParts.push(allMessageParts[i]);
 				}
 			}

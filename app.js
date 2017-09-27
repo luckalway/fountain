@@ -30,6 +30,7 @@ var admin = require('./routes/admin');
 var signIn = require('./routes/signIn');
 var message = require('./routes/message');
 var api = require('./routes/api');
+var api2 = require('./routes/api2');
 
 
 // view engine setup
@@ -62,6 +63,7 @@ app.use('/', index);
 app.use('/sign-in', signIn);
 app.use('/admin', admin);
 app.use('/api', api);
+app.use('/api/v2', api2);
 app.use('/', message);
 app.use('/signout', function(req, res, next) {
 	req.session.signedIn = undefined;
@@ -80,7 +82,7 @@ app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = app.get('env') === 'development' ? err : {};
-
+  log.error(err);
   // render the error page
   res.status(err.status || 500);
   res.render('error');
