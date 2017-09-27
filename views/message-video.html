@@ -29,7 +29,7 @@
 				您的浏览器不支持 video标签。
 			</video>
 			<%} else { %>
-			<video id="message-video" style="height: auto;position: relative;" poster="<%=currentPart.preview.url%>" class="video-js vjs-default-skin col-sm-12" controls="controls">
+			<video id="message-video" style="height: auto;position: relative;" class="video-js vjs-default-skin col-sm-12" controls="controls">
 				<source src="<%=currentPart.video.url%>" type="video/mp4" />
 				<source src="<%=currentPart.video.url%>" type="video/webm" />
 				<source src="<%=currentPart.video.url%>" type="video/ogg" />
