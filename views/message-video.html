@@ -21,12 +21,21 @@
 <body>
 	<div class="container col-sm-12 col-md-10 col-md-offset-1">
 		<div class="videos-container col-sm-12 col-md-12" style="margin-top: 30px;">
+			<% if(currentPart.preview!=null){ %>
 			<video id="message-video" style="height: auto;position: relative;" poster="<%=currentPart.preview.url%>" class="video-js vjs-default-skin col-sm-12" controls="controls">
 				<source src="<%=currentPart.video.url%>" type="video/mp4" />
 				<source src="<%=currentPart.video.url%>" type="video/webm" />
 				<source src="<%=currentPart.video.url%>" type="video/ogg" />
 				您的浏览器不支持 video标签。
 			</video>
+			<%} else { %>
+			<video id="message-video" style="height: auto;position: relative;" poster="<%=currentPart.preview.url%>" class="video-js vjs-default-skin col-sm-12" controls="controls">
+				<source src="<%=currentPart.video.url%>" type="video/mp4" />
+				<source src="<%=currentPart.video.url%>" type="video/webm" />
+				<source src="<%=currentPart.video.url%>" type="video/ogg" />
+				您的浏览器不支持 video标签。
+			</video>
+			<% } %>
 		</div>
 		<div class="clear"></div>
 		<br>
