@@ -8,38 +8,26 @@
 <meta name=format-detection content="telephone=no, email=no">
 <title><%=message.title%>(<%=currentPart.partNo%>/<%=message.countOfParts%>)</title>
 <link href="/framework/videojs/video-js.css" rel="stylesheet">
-<% include include/script.html %>
-
 <style type="text/css">
-.video-js .vjs-big-play-button {
-	top: 50%;
-	left: 50%;
+.container-fluid {
+	padding-top: 10px;
 }
 </style>
-
+<% include include/script.html %>
+<% var videoPreview = currentPart.preview?currentPart.preview.url:''; %>
 </head>
 <body>
-	<div class="container col-sm-12 col-md-10 col-md-offset-1">
-		<div class="videos-container col-sm-12 col-md-12" style="margin-top: 30px;">
-			<% if(currentPart.preview!=null){ %>
-			<video id="message-video" style="height: auto;position: relative;" poster="<%=currentPart.preview.url%>" class="video-js vjs-default-skin col-sm-12" controls="controls">
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="col-sm-12 col-md-8">
+			<video id="message-video" style="width:100%;height: auto;position: relative;" poster="<%=videoPreview%>" class="video-js vjs-default-skin col-sm-12 col-md-4" controls="controls">
 				<source src="<%=currentPart.video.url%>" type="video/mp4" />
 				<source src="<%=currentPart.video.url%>" type="video/webm" />
 				<source src="<%=currentPart.video.url%>" type="video/ogg" />
 				您的浏览器不支持 video标签。
 			</video>
-			<%} else { %>
-			<video id="message-video" style="height: auto;position: relative;" class="video-js vjs-default-skin col-sm-12" controls="controls">
-				<source src="<%=currentPart.video.url%>" type="video/mp4" />
-				<source src="<%=currentPart.video.url%>" type="video/webm" />
-				<source src="<%=currentPart.video.url%>" type="video/ogg" />
-				您的浏览器不支持 video标签。
-			</video>
-			<% } %>
 		</div>
-		<div class="clear"></div>
-		<br>
-		<div class="panel panel-default">
+		<div class="panel panel-default col-sm-12 col-md-4">
 			<div class="panel-heading">
 				<h3 class="panel-title">视频列表</h3>
 			</div>
@@ -56,27 +44,26 @@
 			</div>
 		</div>
 	</div>
-	<script src="/framework/videojs/video.js"></script>
-	<script type="text/javascript">
-	var player = videojs('message-video');
-	player.ready(function(){
-		$(".list-group-item").click(function(){
-			if($(this).hasClass('active')&&!player.paused())
-				return false;
-			
-			player.pause();
-			$(".list-group-item").removeClass('active');
-			$(this).addClass('active');
-			
-			player.src([
-	            {type: "video/mp4", src: $(this).data('video-src')},
-	            {type: "video/webm", src: $(this).data('video-src')},
-	            {type: "video/ogg", src: $(this).data('video-src')}
-			]);
-		});
+<script src="/framework/videojs/video.js"></script>
+<script type="text/javascript">
+var player = videojs('message-video');
+player.ready(function(){
+	$(".list-group-item").click(function(){
+		if($(this).hasClass('active')&&!player.paused())
+			return false;
 		
+		player.pause();
+		$(".list-group-item").removeClass('active');
+		$(this).addClass('active');
+		
+		player.src([
+            {type: "video/mp4", src: $(this).data('video-src')},
+            {type: "video/webm", src: $(this).data('video-src')},
+            {type: "video/ogg", src: $(this).data('video-src')}
+		]);
 	});
+	
+});
 </script>
 </body>
-
 </html>
