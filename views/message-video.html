@@ -48,7 +48,9 @@
 <script src="/framework/videojs/video.js"></script>
 <script type="text/javascript">
 $("#message-video").height($("#message-video").width()/1.6);
-
+$(window).resize(function(){
+	$("#message-video").height($("#message-video").width()/1.6);
+});
 
 var player = videojs('message-video');
 player.ready(function(){
