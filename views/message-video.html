@@ -28,11 +28,11 @@
 				您的浏览器不支持 video标签。
 			</video>
 		</div>
-		<div class="panel panel-default col-sm-12 col-md-4">
+		<div class="panel panel-default col-sm-12 col-md-4" style="padding: 0px;">
 			<div class="panel-heading">
 				<h3 class="panel-title">视频列表</h3>
 			</div>
-			<div class="panel-body">
+			<div class="panel-body" style="padding: 5px;">
 				<ul class="list-group">
 				  <%for (var i=0;i<messageParts.length ;i++){%>	
 				  <li class="list-group-item <%if(messageParts[i]._id == currentPart._id){%>active<%}%>" data-video-src="<%=messageParts[i].video.url%>">
