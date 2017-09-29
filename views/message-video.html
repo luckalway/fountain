@@ -12,6 +12,7 @@
 .container-fluid {
 	padding-top: 10px;
 }
+
 </style>
 <% include include/script.html %>
 <% var videoPreview = currentPart.preview?currentPart.preview.url:''; %>
@@ -19,8 +20,8 @@
 <body>
 <div class="container-fluid">
 	<div class="row-fluid">
-		<div class="col-sm-12 col-md-8">
-			<video id="message-video" style="width:100%;height: auto;position: relative;" poster="<%=videoPreview%>" class="video-js vjs-default-skin col-sm-12 col-md-4" controls="controls">
+		<div class="col-sm-12 col-md-8" style="padding: 0;">
+			<video id="message-video" style="width:100%;"  poster="<%=videoPreview%>" class="video-js vjs-default-skin col-sm-12 col-md-4" controls="controls">
 				<source src="<%=currentPart.video.url%>" type="video/mp4" />
 				<source src="<%=currentPart.video.url%>" type="video/webm" />
 				<source src="<%=currentPart.video.url%>" type="video/ogg" />
@@ -46,6 +47,9 @@
 	</div>
 <script src="/framework/videojs/video.js"></script>
 <script type="text/javascript">
+$("#message-video").height($("#message-video").width()/1.6);
+
+
 var player = videojs('message-video');
 player.ready(function(){
 	$(".list-group-item").click(function(){
