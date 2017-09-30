@@ -9,9 +9,6 @@
 <style type="text/css">
 </style>
 
-<script type="text/javascript">
-	
-</script>
 </head>
 <body>
 	<!-- HTML Form (wrapped in a .bootstrap-iso div) -->
@@ -19,15 +16,15 @@
 		<div class="container-fluid">
 
 			<form id="sign-in-form" name="signInForm" method="post" class="form-horizontal">
-				<input type="hidden" name="redirectUrl" value="<%=redirectUrl%>"/>
+				<input type="hidden" name="redirectUrl" value="<%=redirectUrl%>" />
 				<!-- Form Name -->
 				<legend>登录</legend>
-				<div class="alert alert-success" role="alert"><%=error%></div>
+				<div id="message-container"></div>
 				<!-- Text input-->
 				<div class="form-group">
 					<label class="col-md-4 control-label" for="username">用户名</label>
 					<div class="col-md-4">
-						<input id="username" name="username" placeholder="请输入用户名" class="form-control input-md" required="" type="text">
+						<input id="username" name="username" placeholder="请输入用户名" class="form-control input-md" required="required" type="text">
 
 					</div>
 				</div>
@@ -36,12 +33,19 @@
 				<div class="form-group">
 					<label class="col-md-4 control-label" for="password">密码</label>
 					<div class="col-md-4">
-						<input id="password" name="password" placeholder="请输入密码" class="form-control input-md" required="" type="password">
+						<input id="password" name="password" placeholder="请输入密码" class="form-control input-md" required="required" type="password">
 
 					</div>
 				</div>
-
-
+				<div class="form-group">
+					<label class="col-md-4 control-label" for="authCode">验证码</label>
+					<div class="col-md-1 col-sm-4">
+						<input id="authCode" name="authCode" placeholder="验证码" class="form-control input-md" required="required" type="text">
+					</div>
+					<div class="col-md-1 col-sm-4">
+						<img src="/sign-in/captcha">
+					</div>
+				</div>
 
 				<div class="row">
 					<div class="col-md-6 col-sm-6 col-xs-12">
@@ -52,10 +56,12 @@
 						</div>
 					</div>
 				</div>
-
 			</form>
-
 		</div>
 	</div>
-
+	<script type="text/javascript">
+		if("<%=error%>"!=""){
+			Yuan.skin.showError('message-container', '错误', '<%=error%>');
+		}
+	</script>
 </body>

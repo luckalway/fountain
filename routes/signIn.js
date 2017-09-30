@@ -1,10 +1,6 @@
 var express = require('express');
 var router = express.Router();
-/**
-const { createCanvas, loadImage } = require('canvas')
-const canvas = createCanvas(200, 200)
-const ctx = canvas.getContext('2d')
-**/
+var captchapng = require('captchapng');
 
 var accounts = {
 	'meigong' : {
@@ -31,9 +27,22 @@ router.get('/', function(req, res, next) {
 router.post('/', function(req, res, next) {
 	var username = req.body.username;
 	var pwd = req.body.password;
+	var authCode = req.body.authCode;
+	if (req.session['authCode'] != authCode) {
+		res.render('sign-in', {
+			error : '验证码输入有误.',
+			redirectUrl: req.body.redirectUrl
+		});
+		return;
+	}
+	
 	if (accounts[username] && accounts[username].pwd == pwd) {
 		req.session.signedIn = accounts[username];
-		res.redirect(decodeURI(req.body.redirectUrl));
+		if (req.body.redirectUrl){
+			res.redirect(decodeURI(req.body.redirectUrl));
+		} else {
+			res.redirect("/");
+		}
 	} else {
 		res.render('sign-in', {
 			error : '用户名或密码错误！请重新输入.'
@@ -42,21 +51,17 @@ router.post('/', function(req, res, next) {
 });
 
 router.get('/captcha', function(req, res, next) {
-	// Write "Awesome!"
-	ctx.font = '30px Impact'
-	ctx.rotate(0.1)
-	ctx.fillText('Awesome!', 50, 100)
-
-	// Draw line under text
-	var text = ctx.measureText('Awesome!')
-	ctx.strokeStyle = 'rgba(0,0,0,0.5)'
-	ctx.beginPath()
-	ctx.lineTo(50, 102)
-	ctx.lineTo(50 + text.width, 102)
-	ctx.stroke();
+	var authCode = parseInt(Math.random() * 9000 + 1000);
+	var p = new captchapng(80, 30, authCode); 
+	p.color(0, 0, 0, 0);
+	p.color(80, 80, 80, 255);
 	
-	res.send(body);
-	res.status(canvas.toDataURL()).end();
+	req.session['authCode'] = authCode;
+	
+	res.writeHead(200, {
+		'Content-Type' : 'image/png'
+	});
+	res.end(new Buffer(p.getBase64(), 'base64'));
 });
 
 module.exports = router;
