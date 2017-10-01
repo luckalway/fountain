@@ -8,13 +8,13 @@ var ejs = require('ejs');
 var session = require('express-session');
 
 global.ROOT_PATH = __dirname;
-var app = express();
+global.app = express();
 var env = require('./env-'+app.get('env'));
 global.nano = require('nano')(env.couchdb.url);
 global.couchdb = nano.db.use(env.couchdb.db);
 global.CONF = env.conf;
-global.Log = require('log');
-global.log = new Log('info');
+var LogFactory = require('log');
+global.log = new LogFactory('info');
 
 global.couchdb.update = function(obj, key, callback) {
     var db = this;

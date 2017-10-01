@@ -28,12 +28,15 @@ router.post('/', function(req, res, next) {
 	var username = req.body.username;
 	var pwd = req.body.password;
 	var authCode = req.body.authCode;
-	if (req.session['authCode'] != authCode) {
-		res.render('sign-in', {
-			error : '验证码输入有误.',
-			redirectUrl: req.body.redirectUrl
-		});
-		return;
+	
+	if(app.get('env') === 'production'){
+		if (req.session['authCode'] != authCode) {
+			res.render('sign-in', {
+				error : '验证码输入有误.',
+				redirectUrl: req.body.redirectUrl
+			});
+			return;
+		}
 	}
 	
 	if (accounts[username] && accounts[username].pwd == pwd) {
