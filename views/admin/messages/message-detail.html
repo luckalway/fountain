@@ -122,17 +122,19 @@
 							  		<img src="<%=messageParts[i].summary.images[k].url%>" class="img-thumbnail"/>
 							  	</div>
 						    <% } %>
-						    <% if (messageParts[i].audio) { %>
-						    	<div class="col-xs-3 col-sm-1"> 
-							  		<a target="_blank" id="audio-url" href="/admin/download/<%=messageParts[i].messageId%>/<%=messageParts[i].partNo%>/<%=messageParts[i].audio.filename%>">下载音频</a>
-							  	</div>
-							 <% } %> 	
 						    </div> 
 						<% } else if (messageParts[i].summary.type=='ppt') { %>
 							(点击下载讲章PPT)&nbsp;<a href="/admin/download/<%=messageParts[i].messageId%>/<%=messageParts[i].partNo%>/<%=messageParts[i].summary.ppt.name%>"><%=messageParts[i].summary.ppt.name%></a>
 						<% } else {%>
 							<pre id="summary" data-type="textarea" data-pk="<%=messageParts[i]._id%>" data-inputclass="input-xlarge" data-url="<%=messageParts[i].messageId%>/parts/<%=messageParts[i]._id%>" class="editable"><%=messageParts[i].summary || message.summary%></pre>
 						<% } %>
+						<% if (messageParts[i].audio) { %>
+						<div class="row" >
+					    	<div class="col-xs-3 col-sm-1"> 
+						  		<a target="_blank" id="audio-url" href="/admin/download/<%=messageParts[i].messageId%>/<%=messageParts[i].partNo%>/<%=messageParts[i].audio.filename%>">下载音频</a>
+						  	</div>
+						</div>
+						<% } %> 
 					<% } %>	
 					</div>
 					<div class="panel panel-info">
