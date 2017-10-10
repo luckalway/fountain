@@ -54,7 +54,9 @@
 				<div class="panel-heading">
 					<h3 class="panel-title">标题：</h3>
 				</div>
-				<div class="panel-body"><%=message.title%></div>
+				<div class="panel-body editable" id="title" data-type="text" data-pk="<%=message._id%>" data-inputclass="editable-text" data-url="/admin/doc/<%=message._id%>">
+					<%=message.title%>
+				</div>
 
 				<div class="panel-heading">
 					<h3 class="panel-title">经文</h3>
@@ -104,8 +106,8 @@
 							<h3 class="panel-title">经文</h3>
 						</div>
 						<div class="panel-body">
-							<pre  id="scripture" data-type="textarea" data-pk="<%=messageParts[i]._id%>" data-inputclass="input-xlarge" 
-								data-url="<%=messageParts[i].messageId%>/parts/<%=messageParts[i]._id%>" class="editable"><%=messageParts[i].scripture || message.scripture %>
+							<pre id="scripture" data-type="textarea" data-pk="<%=messageParts[i]._id%>" data-inputclass="input-xlarge" 
+								data-url="/admin/doc/<%=messageParts[i]._id%>" class="editable"><%=messageParts[i].scripture || message.scripture %>
 							</pre>
 						</div>
 					</div>
@@ -126,7 +128,7 @@
 						<% } else if (messageParts[i].summary.type=='ppt') { %>
 							(点击下载讲章PPT)&nbsp;<a href="/admin/download/<%=messageParts[i].messageId%>/<%=messageParts[i].partNo%>/<%=messageParts[i].summary.ppt.name%>"><%=messageParts[i].summary.ppt.name%></a>
 						<% } else {%>
-							<pre id="summary" data-type="textarea" data-pk="<%=messageParts[i]._id%>" data-inputclass="input-xlarge" data-url="<%=messageParts[i].messageId%>/parts/<%=messageParts[i]._id%>" class="editable"><%=messageParts[i].summary || message.summary%></pre>
+							<pre id="summary" data-type="textarea" data-pk="<%=messageParts[i]._id%>" data-inputclass="input-xlarge" data-url="/admin/doc/<%=messageParts[i]._id%>" class="editable"><%=messageParts[i].summary || message.summary%></pre>
 						<% } %>
 						<% if (messageParts[i].audio) { %>
 						<div class="row" >

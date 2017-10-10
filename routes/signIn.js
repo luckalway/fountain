@@ -2,21 +2,6 @@ var express = require('express');
 var router = express.Router();
 var captchapng = require('captchapng');
 
-var accounts = {
-	'meigong' : {
-		pwd : 'mgdpy@2017',
-		role : 'meigong',
-		name : '美工001',
-		username: 'meigong'
-	},
-	'shipin' : {
-		pwd : 'spdpy@2017',
-		role : 'shipin',
-		name : '视频001',
-		username: 'shipin'
-	}
-}
-
 router.get('/', function(req, res, next) {
 	res.render('sign-in', {
 		error : '',
@@ -48,7 +33,8 @@ router.post('/', function(req, res, next) {
 		}
 	} else {
 		res.render('sign-in', {
-			error : '用户名或密码错误！请重新输入.'
+			error : '用户名或密码错误！请重新输入.',
+			redirectUrl: req.body.redirectUrl
 		});
 	}
 });

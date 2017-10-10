@@ -13,6 +13,7 @@ var env = require('./env-'+app.get('env'));
 global.nano = require('nano')(env.couchdb.url);
 global.couchdb = nano.db.use(env.couchdb.db);
 global.CONF = env.conf;
+global.accounts = env.accounts;
 var LogFactory = require('log');
 global.log = new LogFactory('info');
 

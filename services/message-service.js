@@ -146,17 +146,3 @@ exports.createMessagePart = function(part, callback){
 		modifiedDate: Date.parse(new Date())
 	}), callback);
 }
-
-exports.partiallyUpdateMessage = function(id, nameValues, callback){
-	couchdb.get(id, {
-		revs_info : true
-	}, function(err, body) {
-		for(var name in nameValues){
-			body[name] = nameValues[name];
-		}
-		delete body['_revs_info'];
-		couchdb.update(body, body._id, callback);
-	});
-
-
-}

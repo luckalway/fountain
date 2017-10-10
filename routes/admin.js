@@ -4,6 +4,7 @@ var path = require('path');
 var fs = require("fs");
 var merge = require('merge');
 var messageService = require('../services/message-service');
+var commonService = require('../services/common-service');
 
 var router = express.Router();
 
@@ -42,13 +43,25 @@ upload.on('end', function (fileInfo, req, res) {
 	}
 });
 
-router.use('/messages*', function(req, res, next) {
+router.use('/*', function(req, res, next) {
 	if(req.session.signedIn){
 		next();
 	}else{
 		res.redirect('/sign-in?redirectUrl='+encodeURI(req.originalUrl));
 	}
 });
+
+router.put('/doc/:docId', function(req, res, next) {
+	var nameValues = {};
+	nameValues[req.body.name] = req.body.value;
+	commonService.partiallyUpdate(req.body.pk, nameValues, function(error, body) {
+		log.info(req.session.signedIn.username + ' updated the '
+				+ req.body.name + ' to "' + req.body.value
+				+ '" for document of id ' + req.body.pk);
+		res.status(200).end();
+	});
+});
+
 
 router.use('/messages/create*', function(req, res, next) {
 	if(req.session.signedIn.role == 'shipin'){
@@ -140,6 +153,7 @@ router.post('/messages', function(req, res, next) {
 	});
 });
 
+
 router.post('/messages/:messageId/parts', function(req, res, next) {
 	messageService.createMessagePart(merge(req.body, req.session.messagePart),function(err){
 		if(!err){
@@ -149,18 +163,6 @@ router.post('/messages/:messageId/parts', function(req, res, next) {
 	});
 });
 
-router.put('/messages/:messageId/parts/:partId', function(req, res, next) {
-	var fieldName = req.body.name;
-	messageService.partiallyUpdateMessage(req.body.pk, {
-		fieldName : req.body.value
-	}, function(error, body) {
-		log.info(req.session.signedIn.username + ' updated the '
-				+ req.body.name + ' to "' + req.body.value
-				+ '" for messagePart of id ' + req.params.partId);
-		res.status(200).end();
-	});
-
-});
 
 router.get('/messages', function(req, res, next) {
 	messageService.getMessages(function(err,body){
