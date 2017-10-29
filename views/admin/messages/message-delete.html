@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>删除讲道信息</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<% include ../../include/script.html %>
+</head>
+<body>
+	<% include ../../include/header.html %>
+  <div class="container">
+		<div id="alert-container"></div>
+    <div class="form-group">
+      <input class="form-control" id="messageId" name="messageId" placeholder="请输入要删除的信息编号" type="text" required="required"
+        style="display: inline-block; width: 200px;" maxlength="100" />
+        <button class="btn btn-primary " id="deleteButton" name="deleteButton" type="submit">删除</button>
+    </div>
+	</div>
+  <script type="text/javascript">
+  $(function(){
+    $('#deleteButton').click(function(){
+      $.ajax({
+        url: '/admin/messages/'+$('#messageId').val(),
+        type: 'DELETE',
+        success: function(result) {
+            if(result == 'success'){
+							Yuan.skin.showInfo('alert-container', '成功','删除成功！');
+						}else if(result == 'not_found'){
+							Yuan.skin.showInfo('alert-container', '失败','编号不正确！');
+						}else if(result == 'has_parts'){
+							Yuan.skin.showInfo('alert-container', '失败','请先删除分段！');
+						}else if(result == 'before_today'){
+							Yuan.skin.showInfo('alert-container', '失败','已经推送的信息无法删除！');
+						}
+        }
+      });
+    });
+  })
+  </script>
+</body>
+</html>

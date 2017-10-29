@@ -1,23 +1,23 @@
 <!DOCTYPE HTML>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<title>上传讲道信息 - 第<%=partNo%>段</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<title>上传讲道信息 - 第<%=partNo%>段</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<% include ../../include/script.html %>
-<link href="/framework/jquery.uploadfile/uploadfile.css" rel="stylesheet">
-<script src="/framework/jquery.uploadfile/jquery.uploadfile.min.js"></script>
-<script src="/framework/jquery.form-validator/jquery.form-validator.min.js"></script>
+	<% include ../../include/script.html %>
+	<link href="/framework/jquery.uploadfile/uploadfile.css" rel="stylesheet">
+	<script src="/framework/jquery.uploadfile/jquery.uploadfile.min.js"></script>
+	<script src="/framework/jquery.form-validator/jquery.form-validator.min.js"></script>
 
-<style type="text/css">
-.row {
-	padding-top: 15px;
-	clear: both;
-}
-</style>
+	<style type="text/css">
+	.row {
+		padding-top: 15px;
+		clear: both;
+	}
+	</style>
 
-<script type="text/javascript">
+	<script type="text/javascript">
 	$(document).ready(function() {
 		var uploadedFiles = {
 			previewImage: null,
@@ -40,7 +40,7 @@
 				});
 			}
 		};
-		
+
 		$("#multiMediaUploader").uploadFile({
 			uploadStr : "上传视频(mp4)、音频(mp3)、预览图(png,jpg)",
 			dragdropWidth: '500px',
@@ -74,7 +74,7 @@
 				}
 				if(errors.length){
 					Yuan.skin.showError('alert-container','上传失败',errors.join(',') + ', 请重新选择文件！');
-				    return false; 
+					return false;
 				}
 				return true;
 			}
@@ -105,30 +105,30 @@
 				$("#summary-tabs").children().hide();
 			}
 		});
-		
+
 		$.validate({
-		    onModulesLoaded : function() {
-		    	$('#country').suggestCountry();
-		    },
-		    onValidate : function($form) {
-		    	if(!uploadedFiles.video){
-			        return {
-			          element : $('#multiMediaUploader'),
-			          message : '视频还未上传！ '
-			        }
-		    	}
-		    },
+			onModulesLoaded : function() {
+				$('#country').suggestCountry();
+			},
+			onValidate : function($form) {
+				if(!uploadedFiles.video){
+					return {
+						element : $('#multiMediaUploader'),
+						message : '视频还未上传！ '
+					}
+				}
+			},
 		});
 	});
-</script>
+	</script>
 </head>
 <body>
-<% include ../../include/header.html %>
+	<% include ../../include/header.html %>
 	<div class="page-header">
-	  <h3>上传讲道信息 <small>第<%=partNo%>段</small></h3>
+		<h3>上传讲道信息 <small>第<%=partNo%>段</small></h3>
 	</div>
 	<div class="container-fluid">
-	    <div id="alert-container"></div>
+		<div id="alert-container"></div>
 		<div class="row">
 			<div class="col-md-6 col-sm-6 col-xs-12">
 				<div id="multiMediaUploader">上传视频</div>
@@ -144,8 +144,8 @@
 					<div class="form-group ">
 						&nbsp;
 						<label class="control-label " for="date"> 推送日期 </label>
-						<span class="asteriskField"> * </span> 
-						<input class="form-control date" id="publishDate" name="publishDate" readonly="readonly" 
+						<span class="asteriskField"> * </span>
+						<input class="form-control date" id="publishDate" name="publishDate" readonly="readonly"
 						type="text"style="width: auto;display: inline-block;" data-validation="required" data-validation-error-msg="推送日期不能为空！"/>
 					</div>
 				</div>

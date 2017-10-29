@@ -13,12 +13,12 @@ var baseUploadUrl = path.join(CONF.baseUploadUrl, 'messages');
 
 upload.on('end', function (fileInfo, req, res) {
 	req.session.messagePart = req.session.messagePart || {};
-	
+
 	if(req.uploadedFileType == "multi-media"){
 		var simpleFile = {
-				title: fileInfo.originalName.split(".")[0],
-				filename: fileInfo.originalName,
-				url: fileInfo.url
+			title: fileInfo.originalName.split(".")[0],
+			filename: fileInfo.originalName,
+			url: fileInfo.url
 		}
 		if(fileInfo.name.endsWith('mp4')){
 			req.session.messagePart.video = simpleFile;
@@ -28,18 +28,18 @@ upload.on('end', function (fileInfo, req, res) {
 			req.session.messagePart.preview = simpleFile;
 		}
 	}else if(req.uploadedFileType == "summary-ppt"){
-    	req.session.messagePart.summary = req.session.messagePart.summary || {type: "ppt"};
-    	var summary = req.session.messagePart.summary;
-    	summary.ppt = fileInfo;
+		req.session.messagePart.summary = req.session.messagePart.summary || {type: "ppt"};
+		var summary = req.session.messagePart.summary;
+		summary.ppt = fileInfo;
 	}else if(req.uploadedFileType == "summary-images"){
-    	req.session.messagePart.summary = req.session.messagePart.summary || {type: "image"};
-    	var summary = req.session.messagePart.summary;
-    	summary.images = summary.images || [];
-    	summary.imageNames = summary.imageNames || [];
-    	if(summary.imageNames.indexOf(fileInfo.name) == -1){
-    		summary.images.push(merge({},fileInfo));
-    		summary.imageNames.push(fileInfo.name);
-    	}
+		req.session.messagePart.summary = req.session.messagePart.summary || {type: "image"};
+		var summary = req.session.messagePart.summary;
+		summary.images = summary.images || [];
+		summary.imageNames = summary.imageNames || [];
+		if(summary.imageNames.indexOf(fileInfo.name) == -1){
+			summary.images.push(merge({},fileInfo));
+			summary.imageNames.push(fileInfo.name);
+		}
 	}
 });
 
@@ -56,8 +56,8 @@ router.put('/doc/:docId', function(req, res, next) {
 	nameValues[req.body.name] = req.body.value;
 	commonService.partiallyUpdate(req.body.pk, nameValues, function(error, body) {
 		log.info(req.session.signedIn.username + ' updated the '
-				+ req.body.name + ' to "' + req.body.value
-				+ '" for document of id ' + req.body.pk);
+		+ req.body.name + ' to "' + req.body.value
+		+ '" for document of id ' + req.body.pk);
 		res.status(200).end();
 	});
 });
@@ -79,13 +79,13 @@ router.get('/messages/:id', function(req, res, next) {
 				next(err);
 				return;
 			}
-			
+
 			for (var i = message.parts.length; i < message.countOfParts; i++) {
 				message.parts.push({
 					uploaded: false
 				});
 			}
-			
+
 			res.render('admin/messages/message-detail', {
 				message : message,
 				messageParts : message.parts
@@ -97,52 +97,70 @@ router.get('/messages/:id', function(req, res, next) {
 });
 
 router.get('/download/:messageId/:partNo/:fileName', function(req, res) {
-	var file = path.join(baseUploadDir, req.params.messageId, req.params.partNo, req.params.fileName); 
-	res.download(file, req.params.fileName);    
+	var file = path.join(baseUploadDir, req.params.messageId, req.params.partNo, req.params.fileName);
+	res.download(file, req.params.fileName);
 });
 
 router.post('/messages/:messageId/parts/:partNo/multi-media', function (req, res, next) {
 	req.uploadedFileType = "multi-media";
 	upload.fileHandler({
-        uploadDir: function () {
-            return path.join(baseUploadDir, req.params.messageId, req.params.partNo); 
-        },
-        uploadUrl: function () {
-            return  path.join(baseUploadUrl, req.params.messageId, req.params.partNo);
-        }
-    })(req, res, next);
-    
+		uploadDir: function () {
+			return path.join(baseUploadDir, req.params.messageId, req.params.partNo);
+		},
+		uploadUrl: function () {
+			return  path.join(baseUploadUrl, req.params.messageId, req.params.partNo);
+		}
+	})(req, res, next);
+
 });
 
 router.post('/messages/:messageId/parts/:partNo/summary-ppts', function (req, res, next) {
 	req.uploadedFileType = "summary-ppt";
-    upload.fileHandler({
-        uploadDir: function () {
-            return path.join(baseUploadDir, req.params.messageId, req.params.partNo); 
-        },
-        uploadUrl: function () {
-            return path.join(baseUploadUrl, req.params.messageId, req.params.partNo);
-        }
-    })(req, res, next);
+	upload.fileHandler({
+		uploadDir: function () {
+			return path.join(baseUploadDir, req.params.messageId, req.params.partNo);
+		},
+		uploadUrl: function () {
+			return path.join(baseUploadUrl, req.params.messageId, req.params.partNo);
+		}
+	})(req, res, next);
 
 });
 
 router.post('/messages/:messageId/parts/:partNo/summary-images', function (req, res, next) {
 	req.uploadedFileType = "summary-images";
-    upload.fileHandler({
-        uploadDir: function () {
-            return path.join(baseUploadDir, req.params.messageId, req.params.partNo); 
-        },
-        uploadUrl: function () {
-            return  path.join(baseUploadUrl, req.params.messageId, req.params.partNo);
-        }
-    })(req, res, next);
+	upload.fileHandler({
+		uploadDir: function () {
+			return path.join(baseUploadDir, req.params.messageId, req.params.partNo);
+		},
+		uploadUrl: function () {
+			return  path.join(baseUploadUrl, req.params.messageId, req.params.partNo);
+		}
+	})(req, res, next);
 
 });
 
 router.get('/messages/new', function(req, res, next) {
 	req.session.message = req.session.message || {id:(new Date()).getTime()};
 	res.render('admin/messages/message-new', {messageId:req.session.message.id});
+});
+
+router.get('/messages/delete', function(req, res, next) {
+	req.session.message = req.session.message || {id:(new Date()).getTime()};
+	res.render('admin/messages/message-delete', {messageId:req.session.message.id});
+});
+
+router.delete('/messages/:id', function(req, res, next) {
+	var id = req.params.id.substring(3);
+	messageService.removeMessage(id,function(err, body){
+		if(err){
+			res.send(err.error);
+			res.status(200).end();
+		}else{
+			res.send('success');
+			res.status(200).end();
+		}
+	});
 });
 
 router.post('/messages', function(req, res, next) {
