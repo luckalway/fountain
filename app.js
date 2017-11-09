@@ -20,7 +20,7 @@ global.log = new LogFactory('info');
 global.couchdb.update = function(obj, key, callback) {
     var db = this;
 
-    db.get(key, function (error, existing) { 
+    db.get(key, function (error, existing) {
         if(!error) obj._rev = existing._rev;
         db.insert(obj, key, callback);
     });
@@ -63,6 +63,7 @@ app.use(function(req, res, next) {
 app.use('/', index);
 app.use('/sign-in', signIn);
 app.use('/admin', admin);
+app.use('/admin/docs', express.static('docs'));
 app.use('/api', api);
 app.use('/api/v2', api2);
 app.use('/', message);
