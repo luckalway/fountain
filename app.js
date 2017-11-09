@@ -63,7 +63,7 @@ app.use(function(req, res, next) {
 app.use('/', index);
 app.use('/sign-in', signIn);
 app.use('/admin', admin);
-app.use('/admin/docs', express.static('docs'));
+app.use('/admin/docs', express.static(path.join(__dirname, 'docs')));
 app.use('/api', api);
 app.use('/api/v2', api2);
 app.use('/', message);
