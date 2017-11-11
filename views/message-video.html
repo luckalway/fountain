@@ -64,20 +64,20 @@
 						player.ready(function(){
 							$(".message-item").click(function(){
 								var scriptureElement = $(this).next();
+								if(scriptureElement.is(":hidden")){
+									scriptureElement.slideDown();
+								}else{
+									scriptureElement.slideUp();
+								}
+
 								if($(this).hasClass('active')&&!player.paused()){
-									if(scriptureElement.is(":hidden")){
-										scriptureElement.slideDown();
-									}else{
-										scriptureElement.slideUp();
-									}
-									return false;
+										return false;
 								}
 
 
 								player.pause();
 								$(".message-item").removeClass('active');
 								$(this).addClass('active');
-								scriptureElement.slideDown();
 
 								player.src([
 									{type: "video/mp4", src: $(this).data('video-src')},

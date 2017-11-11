@@ -44,8 +44,7 @@ router.get('/messages/:resourceId/video', function(req, res, next) {
 				var isBeforeOrSameCurrent = parseInt(currentPart.partNo) >= parseInt(allMessageParts[i].partNo);
 				if(isBeforeToday || isBeforeOrSameCurrent){
 					allMessageParts[i].preview = defaultPreview;
-				//	console.log('ddd'+allMessageParts[i]['scripture']+"ddd");
-					var scripture = allMessageParts[i]['scripture'].trim();
+					var scripture = allMessageParts[i]['scripture'].trim() || messageBody.scripture;
 					scripture = scripture.replace(/[\r\n]+/g, "<br/>");
 					allMessageParts[i]['scripture'] = scripture;
 					displayedMessageParts.push(allMessageParts[i]);
