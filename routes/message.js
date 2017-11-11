@@ -14,8 +14,8 @@ router.get('/messages/:resourceId/video', function(req, res, next) {
 		messageId = resourceId.split("_")[0]
 	} else {
 		messageId = resourceId;
-	} 
- 
+	}
+
 	couchdb.view("messages", "by_message_id", {
 		startkey:[messageId],
 		endkey:[messageId, {}]
@@ -37,25 +37,29 @@ router.get('/messages/:resourceId/video', function(req, res, next) {
 					currentPart = doc.value;
 				}
 			});
-			
+
 			var displayedMessageParts = [];
 			for(var i=0;i<allMessageParts.length;i++){
 				var isBeforeToday = moment(allMessageParts[i].publishDate, "YYYY-MM-DD").endOf('day').isBefore(new Date());
 				var isBeforeOrSameCurrent = parseInt(currentPart.partNo) >= parseInt(allMessageParts[i].partNo);
 				if(isBeforeToday || isBeforeOrSameCurrent){
 					allMessageParts[i].preview = defaultPreview;
+				//	console.log('ddd'+allMessageParts[i]['scripture']+"ddd");
+					var scripture = allMessageParts[i]['scripture'].trim();
+					scripture = scripture.replace(/[\r\n]+/g, "<br/>");
+					allMessageParts[i]['scripture'] = scripture;
 					displayedMessageParts.push(allMessageParts[i]);
 				}
 			}
-			
+		//	console.log(displayedMessageParts);
 			res.render('message-video', {
 				message : messageBody,
 				currentPart: currentPart,
 				messageParts : displayedMessageParts
 			});
 		}
-	});	
-	
+	});
+
 
 });
 

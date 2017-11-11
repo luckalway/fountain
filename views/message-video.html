@@ -2,74 +2,91 @@
 <!DOCTYPE html>
 <html lang=en>
 <head>
-<meta name=viewport
+	<meta name=viewport
 	content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-<meta charset=UTF-8>
-<meta name=format-detection content="telephone=no, email=no">
-<title><%=message.title%>(<%=currentPart.partNo%>/<%=message.countOfParts%>)</title>
-<link href="/framework/videojs/video-js.css" rel="stylesheet">
-<style type="text/css">
-.container-fluid {
-	padding-top: 10px;
-}
+	<meta charset=UTF-8>
+	<meta name=format-detection content="telephone=no, email=no">
+	<title><%=message.title%>(<%=currentPart.partNo%>/<%=message.countOfParts%>)</title>
+	<link href="/framework/videojs/video-js.css" rel="stylesheet">
+	<style type="text/css">
+	.container-fluid {
+		padding-top: 10px;
+	}
 
 </style>
 <% include include/script.html %>
 <% var videoPreview = currentPart.preview?currentPart.preview.url:''; %>
 </head>
 <body>
-<div class="container-fluid">
-	<div class="row-fluid">
-		<div class="col-sm-12 col-md-8" style="padding: 0;">
-			<video id="message-video" style="width:100%;"  poster="<%=videoPreview%>" class="video-js vjs-default-skin col-sm-12 col-md-4" controls="controls">
-				<source src="<%=currentPart.video.url%>" type="video/mp4" />
-				<source src="<%=currentPart.video.url%>" type="video/webm" />
-				<source src="<%=currentPart.video.url%>" type="video/ogg" />
-				您的浏览器不支持 video标签。
-			</video>
-		</div>
-		<div class="panel panel-default col-sm-12 col-md-4" style="padding: 0px;">
-			<div class="panel-heading">
-				<h3 class="panel-title">视频列表</h3>
-			</div>
-			<div class="panel-body" style="padding: 5px;">
-				<ul class="list-group">
-				  <%for (var i=0;i<messageParts.length ;i++){%>	
-				  <li class="list-group-item <%if(messageParts[i]._id == currentPart._id){%>active<%}%>" data-video-src="<%=messageParts[i].video.url%>">
-				  	<%=message.title%>(<%=messageParts[i].partNo%>/<%=message.countOfParts%>)
-				  	<div style="float: right;">
-				  	</div>	
-				  </li>
-				  <% } %>
-				</ul>
-			</div>
-		</div>
-	</div>
-<script src="/framework/videojs/video.js"></script>
-<script type="text/javascript">
-$("#message-video").height($("#message-video").width()/1.6);
-$(window).resize(function(){
-	$("#message-video").height($("#message-video").width()/1.6);
-});
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="col-sm-12 col-md-8" style="padding: 0;">
+				<video id="message-video" style="width:100%;"  poster="<%=videoPreview%>" class="video-js vjs-default-skin col-sm-12 col-md-4" controls="controls">
+					<source src="<%=currentPart.video.url%>" type="video/mp4" />
+						<source src="<%=currentPart.video.url%>" type="video/webm" />
+							<source src="<%=currentPart.video.url%>" type="video/ogg" />
+								您的浏览器不支持 video标签。
+							</video>
+						</div>
+						<div class="panel panel-default col-sm-12 col-md-4" style="padding: 0px;">
+							<div class="panel-heading">
+								<h3 class="panel-title">视频列表</h3>
+							</div>
+							<div class="panel-body" style="padding: 5px;">
+								<ul class="list-group">
+									<%for (var i=0;i<messageParts.length ;i++){%>
+										<li class="list-group-item message-item <%if(messageParts[i]._id == currentPart._id){%>active<%}%>" data-video-src="<%=messageParts[i].video.url%>">
+											<%=message.title%>(<%=messageParts[i].partNo%>/<%=message.countOfParts%>)
+											<div style="float: right;">
+												<span class="glyphicon glyphicon-book"></span>
+											</div>
+										</li>
+										<li class="list-group-item" style="padding:5px;display:none;">
+											<div class="scripture">
+												<span>读经：</span>
+												<hr>
+												<%-messageParts[i].scripture%>
+											</div>
+										</li>
+										<% } %>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<script src="/framework/videojs/video.js"></script>
+						<script type="text/javascript">
+						$("#message-video").height($("#message-video").width()/1.6);
+						$(window).resize(function(){
+							$("#message-video").height($("#message-video").width()/1.6);
+						});
 
-var player = videojs('message-video');
-player.ready(function(){
-	$(".list-group-item").click(function(){
-		if($(this).hasClass('active')&&!player.paused())
-			return false;
-		
-		player.pause();
-		$(".list-group-item").removeClass('active');
-		$(this).addClass('active');
-		
-		player.src([
-            {type: "video/mp4", src: $(this).data('video-src')},
-            {type: "video/webm", src: $(this).data('video-src')},
-            {type: "video/ogg", src: $(this).data('video-src')}
-		]);
-	});
-	
-});
-</script>
-</body>
-</html>
+						var player = videojs('message-video');
+						player.ready(function(){
+							$(".message-item").click(function(){
+								var scriptureElement = $(this).next();
+								if($(this).hasClass('active')&&!player.paused()){
+									if(scriptureElement.is(":hidden")){
+										scriptureElement.slideDown();
+									}else{
+										scriptureElement.slideUp();
+									}
+									return false;
+								}
+
+
+								player.pause();
+								$(".message-item").removeClass('active');
+								$(this).addClass('active');
+								scriptureElement.slideDown();
+
+								player.src([
+									{type: "video/mp4", src: $(this).data('video-src')},
+									{type: "video/webm", src: $(this).data('video-src')},
+									{type: "video/ogg", src: $(this).data('video-src')}
+								]);
+							});
+
+						});
+					</script>
+				</body>
+				</html>
