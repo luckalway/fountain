@@ -24,8 +24,6 @@ upload.on('end', function (fileInfo, req, res) {
 			req.session.messagePart.video = simpleFile;
 		}else if(fileInfo.name.endsWith('mp3')){
 			req.session.messagePart.audio = simpleFile;
-		}else if(fileInfo.name.endsWith('png') || fileInfo.name.endsWith('jpg')){
-			req.session.messagePart.preview = simpleFile;
 		}
 	}else if(req.uploadedFileType == "summary-ppt"){
 		req.session.messagePart.summary = req.session.messagePart.summary || {type: "ppt"};
@@ -101,6 +99,19 @@ router.get('/download/:messageId/:partNo/:fileName', function(req, res) {
 	res.download(file, req.params.fileName);
 });
 
+router.post('/messages/:messageId/cover', function (req, res, next) {
+	//TODO
+	req.uploadedFileType = "cover";
+	upload.fileHandler({
+		uploadDir: function () {
+			return path.join(baseUploadDir, req.params.messageId);
+		},
+		uploadUrl: function () {
+			return  path.join(baseUploadUrl, req.params.messageId);
+		}
+	})(req, res, next);
+});
+
 router.post('/messages/:messageId/parts/:partNo/multi-media', function (req, res, next) {
 	req.uploadedFileType = "multi-media";
 	upload.fileHandler({
@@ -111,7 +122,6 @@ router.post('/messages/:messageId/parts/:partNo/multi-media', function (req, res
 			return  path.join(baseUploadUrl, req.params.messageId, req.params.partNo);
 		}
 	})(req, res, next);
-
 });
 
 router.post('/messages/:messageId/parts/:partNo/summary-ppts', function (req, res, next) {
@@ -173,6 +183,7 @@ router.post('/messages', function(req, res, next) {
 
 
 router.post('/messages/:messageId/parts', function(req, res, next) {
+	console.log(merge(req.body, req.session.messagePart));
 	messageService.createMessagePart(merge(req.body, req.session.messagePart),function(err){
 		if(!err){
 			req.session.messagePart = null;

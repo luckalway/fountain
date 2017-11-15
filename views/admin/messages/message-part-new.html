@@ -30,9 +30,7 @@
 						url: file.url,
 						deleteUrl:file.deleteUrl
 					}
-					if(file.originalName.endsWith('jpg')||file.originalName.endsWith('png')){
-						self.previewImage = simpleFile;
-					}else if(file.originalName.endsWith('mp4')){
+					if(file.originalName.endsWith('mp4')){
 						self.video = simpleFile;
 					}else if(file.originalName.endsWith('mp3')){
 						self.audio = simpleFile;
@@ -42,9 +40,9 @@
 		};
 
 		$("#multiMediaUploader").uploadFile({
-			uploadStr : "上传视频(mp4)、音频(mp3)、预览图(png,jpg)",
-			dragdropWidth: '500px',
-			allowedTypes: 'mp4,mp3,jpg,png',
+			uploadStr : "上传视频(mp4)、音频(mp3)",
+			dragdropWidth: '380px',
+			allowedTypes: 'mp4,mp3',
 			extErrorStr: '格式不正确，只允许的格式：',
 			url : "/admin/messages/<%=messageId%>/parts/<%=partNo%>/multi-media",
 			fileName : "multi-media",
@@ -58,11 +56,7 @@
 				var errors = [];
 				for(var i=0;i<files.length;i++){
 					var file = files[i];
-					if(file.name.endsWith('jpg') || file.name.endsWith('png')){
-						if(uploadedFiles.previewImage){
-							errors.push("预览图已经存在");
-						}
-					}else if(file.name.endsWith('mp4')){
+					if(file.name.endsWith('mp4')){
 						if(uploadedFiles.video){
 							errors.push("视频文件已经存在");
 						}

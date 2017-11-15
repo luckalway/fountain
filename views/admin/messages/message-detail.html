@@ -6,35 +6,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <% include ../../include/script.html %>
+
 <% if(signedIn.role == 'shipin'){ %>
-<link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
-<script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+<link href="/framework/xeditable/bootstrap-editable.css" rel="stylesheet"/>
+<link href="/framework/jquery.uploadfile/uploadfile.css" rel="stylesheet">
+<link href="/framework/cropper/cropper.min.css" rel="stylesheet">
+
+<script src="/framework/xeditable/bootstrap-editable.min.js"></script>
+<script src="/framework/jquery.uploadfile/jquery.uploadfile.min.js"></script>
+<script src="/framework/jquery.form-validator/jquery.form-validator.min.js"></script>
+<script src="/framework/cropper/cropper.min.js"></script>
 <% } %>
+
 <style type="text/css">
 .return {
 	margin: 10px;
 }
+
+.panel-body {
+	padding: 10px;
+}
+
+img {
+  max-width: 100%; /* This rule is very important, please do not ignore this! */
+}
 </style>
-
-<script type="text/javascript">
-	$(document).ready(function() {
-		$("#message-container").find("button").click(function() {
-			var glyphicon = $(this).find(".glyphicon");
-			if (glyphicon.hasClass("glyphicon-plus")) {
-				$("#message-base-info").slideDown(500,function(){
-					glyphicon.removeClass('glyphicon-plus');
-					glyphicon.addClass('glyphicon-minus');
-				});
-			} else {
-				$("#message-base-info").slideUp(500,function(){
-					glyphicon.removeClass('glyphicon-minus');
-					glyphicon.addClass('glyphicon-plus');
-				});
-			}
-		});
-	});
-</script>
-
 
 </head>
 <body>
@@ -49,7 +45,14 @@
 				<%=message.title%> - <span class="label label-default">讲道日期：<%=message.date%></span>
 			</h3>
 		</div>
+
 		<div class="panel-body" id="message-base-info" style="display: none;">
+			<div class="panel panel-default">
+			    <div class="panel-body">
+			        <div id="previewImageUploader">上传封面图</div>
+			    </div>
+			</div>
+
 			<div class="panel panel-info">
 				<div class="panel-heading">
 					<h3 class="panel-title">标题：</h3>
@@ -85,7 +88,7 @@
 				</a>
 			<% } %>
 		</li>
-		<% } %>		
+		<% } %>
 		</ul>
 
 		<!-- Tab panes -->
@@ -101,12 +104,12 @@
 						<div class="panel-body">
 							<%=message.title%>(<%=i+1%>/<%=message.countOfParts%>)
 						</div>
-						
+
 						<div class="panel-heading">
 							<h3 class="panel-title">经文</h3>
 						</div>
 						<div class="panel-body">
-							<pre id="scripture" data-type="textarea" data-pk="<%=messageParts[i]._id%>" data-inputclass="input-xlarge" 
+							<pre id="scripture" data-type="textarea" data-pk="<%=messageParts[i]._id%>" data-inputclass="input-xlarge"
 								data-url="/admin/doc/<%=messageParts[i]._id%>" class="editable"><%=messageParts[i].scripture || message.scripture %>
 							</pre>
 						</div>
@@ -120,11 +123,11 @@
 						<% if (messageParts[i].summary.type=='image') { %>
 							<div class="row" >
 							<% for (var k=0;k<messageParts[i].summary.images.length;k++){ %>
-        						<div class="col-xs-3 col-sm-1"> 
+        						<div class="col-xs-3 col-sm-1">
 							  		<img src="<%=messageParts[i].summary.images[k].url%>" class="img-thumbnail"/>
 							  	</div>
 						    <% } %>
-						    </div> 
+						    </div>
 						<% } else if (messageParts[i].summary.type=='ppt') { %>
 							(点击下载讲章PPT)&nbsp;<a href="/admin/download/<%=messageParts[i].messageId%>/<%=messageParts[i].partNo%>/<%=messageParts[i].summary.ppt.name%>"><%=messageParts[i].summary.ppt.name%></a>
 						<% } else {%>
@@ -132,12 +135,12 @@
 						<% } %>
 						<% if (messageParts[i].audio) { %>
 						<div class="row" >
-					    	<div class="col-xs-3 col-sm-1"> 
+					    	<div class="col-xs-3 col-sm-1">
 						  		<a target="_blank" id="audio-url" href="/admin/download/<%=messageParts[i].messageId%>/<%=messageParts[i].partNo%>/<%=messageParts[i].audio.filename%>">下载音频</a>
 						  	</div>
 						</div>
-						<% } %> 
-					<% } %>	
+						<% } %>
+					<% } %>
 					</div>
 					<div class="panel panel-info">
 						<div class="panel-heading">
@@ -162,5 +165,100 @@
 		<% } %>
 		</div>
 	</div>
+
+	<!-- Modal -->
+ <div class="modal fade" id="modal" aria-labelledby="modalLabel" role="dialog" tabindex="-1">
+	 <div class="modal-dialog" role="document">
+		 <div class="modal-content">
+			 <div class="modal-header">
+				 <h5 class="modal-title" id="modalLabel">裁剪图片</h5>
+			 </div>
+			 <div class="modal-body">
+				 <div class="row clearfix">
+					 <div class="col-md-9 column" id="coverImageContainer">
+						  <img id="coverImage" src="" alt="Picture">
+					 </div>
+					 <div class="col-md-3 column">
+						 <div class="panel panel-default">
+						    <div class="panel-heading">
+						        <h3 class="panel-title">
+						            预览
+						        </h3>
+						    </div>
+						    <div class="panel-body">
+						        <label>视频封面</label>
+										<hr style="margin:2px 0 8px;border-top: 2px solid #BDB76B;">
+										<img src="/images/noimageavailable.png"/><br><br>
+										<label>小程序封面</label>
+										<hr style="margin:2px 0 8px;border-top: 2px solid #BDB76B;">
+										<img src="/images/noimageavailable.png"/><br>
+						    </div>
+							</div>
+					 </div>
+				 </div>
+			 </div>
+			 <div class="modal-footer">
+				  <button type="button" class="btn btn-default active" id="videoCoverButton">制作视频封面</button>
+					<button type="button" class="btn btn-default" id="weixinCoverButton">制作小程序封面</button>
+					<button type="button" class="btn btn-default" id="clipButton">截取</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			 </div>
+		 </div>
+	 </div>
+ </div>
+</div>
+
+	<script type="text/javascript">
+		$(function() {
+			$("#message-container").find("button").click(function() {
+				var glyphicon = $(this).find(".glyphicon");
+				if (glyphicon.hasClass("glyphicon-plus")) {
+					$("#message-base-info").slideDown(500,function(){
+						glyphicon.removeClass('glyphicon-plus');
+						glyphicon.addClass('glyphicon-minus');
+					});
+				} else {
+					$("#message-base-info").slideUp(500,function(){
+						glyphicon.removeClass('glyphicon-minus');
+						glyphicon.addClass('glyphicon-plus');
+					});
+				}
+			});
+
+			$("#previewImageUploader").uploadFile({
+				uploadStr : "上传封面图(jpg、png)",
+				allowedTypes: 'jpg,png',
+				extErrorStr: '格式不正确，只允许的格式：',
+				url : "/admin/messages/<%=message._id%>/cover",
+				fileName : "cover",
+				onSuccess : function(files, data, xhr, pd) {
+					$('#previewImageUploader').hide();
+					var data = JSON.parse(data);
+					//$(divToResize).css('height',$(container).innerHeight());
+					$('#coverImage').attr('src', data['files'][0]['url']);
+					$('#coverImageContainer').css('height',$(container).innerHeight());
+					$('#modal').modal();
+				}
+			});
+
+			var $image = $('#coverImage');
+			$('#modal').on('shown.bs.modal', function () {
+				$image.cropper({
+					autoCropArea: 0.8,
+				});
+			}).on('hidden.bs.modal', function () {
+				$image.cropper('destroy');
+			});
+
+			$('#weixinCoverButton').click(function(){
+				$image.cropper('setAspectRatio',1080/864);
+			});
+
+			$('#clipButton').click(function(){
+				var croppedCanvas = $image.cropper('getCroppedCanvas');
+			});
+
+		});
+	</script>
 </body>
 </html>
