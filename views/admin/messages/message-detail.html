@@ -173,7 +173,7 @@ img {
 			 <div class="modal-header">
 				 <h5 class="modal-title" id="modalLabel">裁剪图片</h5>
 			 </div>
-			 <div class="modal-body">
+			 <div class="modal-body" id="modalBody">
 				 <div class="row clearfix">
 					 <div class="col-md-9 column" id="coverImageContainer">
 						  <img id="coverImage" src="" alt="Picture">
@@ -188,19 +188,20 @@ img {
 						    <div class="panel-body">
 						        <label>视频封面</label>
 										<hr style="margin:2px 0 8px;border-top: 2px solid #BDB76B;">
-										<img src="/images/noimageavailable.png"/><br><br>
+										<img id="videoCoverPreview" src="/images/noimageavailable.png"/><br><br>
 										<label>小程序封面</label>
 										<hr style="margin:2px 0 8px;border-top: 2px solid #BDB76B;">
-										<img src="/images/noimageavailable.png"/><br>
+										<img id="weixinCoverPreview" src="/images/noimageavailable.png"/><br>
 						    </div>
 							</div>
 					 </div>
 				 </div>
 			 </div>
 			 <div class="modal-footer">
-				  <button type="button" class="btn btn-default active" id="videoCoverButton">制作视频封面</button>
+				  <button type="button" class="btn btn-default" id="videoCoverButton">制作视频封面</button>
 					<button type="button" class="btn btn-default" id="weixinCoverButton">制作小程序封面</button>
 					<button type="button" class="btn btn-default" id="clipButton">截取</button>
+					<button type="button" class="btn btn-default disabled" id="saveButton">保存</button>
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 			 </div>
 		 </div>
@@ -226,8 +227,8 @@ img {
 			});
 
 			$("#previewImageUploader").uploadFile({
-				uploadStr : "上传封面图(jpg、png)",
-				allowedTypes: 'jpg,png',
+				uploadStr : "上传封面图(jpg、png、jpeg)",
+				allowedTypes: 'jpg,png,jpeg',
 				extErrorStr: '格式不正确，只允许的格式：',
 				url : "/admin/messages/<%=message._id%>/cover",
 				fileName : "cover",
@@ -236,28 +237,64 @@ img {
 					var data = JSON.parse(data);
 					//$(divToResize).css('height',$(container).innerHeight());
 					$('#coverImage').attr('src', data['files'][0]['url']);
-					$('#coverImageContainer').css('height',$(container).innerHeight());
 					$('#modal').modal();
 				}
 			});
 
 			var $image = $('#coverImage');
 			$('#modal').on('shown.bs.modal', function () {
+				$('#coverImageContainer').css('height',$('#modalBody').innerHeight());
 				$image.cropper({
 					autoCropArea: 0.8,
 				});
+				$('#videoCoverButton').click();
 			}).on('hidden.bs.modal', function () {
 				$image.cropper('destroy');
 			});
 
+			$('#modal').find('.btn').click(function(){
+					$('#modal').find('.btn').removeClass('active');
+					$(this).addClass('active');
+			});
+
 			$('#weixinCoverButton').click(function(){
 				$image.cropper('setAspectRatio',1080/864);
+				$('#clipButton').data('type', 'weixin');
 			});
 
+
+			$('#videoCoverButton').click(function(){
+				$image.cropper('setAspectRatio',1080/864);
+				$('#clipButton').data('type', 'video');
+			});
+
+			var weixinDef = $.Deferred();
+			var videoDef = $.Deferred();
 			$('#clipButton').click(function(){
 				var croppedCanvas = $image.cropper('getCroppedCanvas');
+				if($(this).data('type') == 'video'){
+					$('#videoCoverPreview').attr('src', croppedCanvas.toDataURL());
+					videoDef.resolve('video');
+				}else if($(this).data('type') == 'weixin'){
+					$('#weixinCoverPreview').attr('src', croppedCanvas.toDataURL());
+					weixinDef.resolve('weixin');
+				}
 			});
 
+			$.when(weixinDef, videoDef).then(function(){
+				$('#saveButton').removeClass('disabled');
+			});
+
+			$('#saveButton').click(function(){
+				$.post('/admin/messages/<%=message._id%>/covers',{
+					weixinCover:$('#weixinCoverPreview').attr('src').split(',')[1],
+					videoCover:$('#videoCoverPreview').attr('src').split(',')[1]
+				},function(res){
+					if(res == 'success'){
+						location.reload();
+					}
+				})
+			})
 		});
 	</script>
 </body>

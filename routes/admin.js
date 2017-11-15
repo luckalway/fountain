@@ -5,6 +5,7 @@ var fs = require("fs");
 var merge = require('merge');
 var messageService = require('../services/message-service');
 var commonService = require('../services/common-service');
+var jimp = require("jimp");
 
 var router = express.Router();
 
@@ -100,7 +101,6 @@ router.get('/download/:messageId/:partNo/:fileName', function(req, res) {
 });
 
 router.post('/messages/:messageId/cover', function (req, res, next) {
-	//TODO
 	req.uploadedFileType = "cover";
 	upload.fileHandler({
 		uploadDir: function () {
@@ -205,5 +205,32 @@ router.get('/messages/:messageId/parts/:partNo', function(req, res, next) {
 	res.render('admin/messages/message-part-new', { messageId: messageId, partNo:partNo });
 });
 
+router.post('/messages/:messageId/covers', function(req, res){
+	var bufferImages = [{
+		type:'video',
+		data: Buffer.from(req.body.videoCover, "base64")},
+		{
+			type:'weixin',
+			data:Buffer.from(req.body.weixinCover, "base64")
+		}];
+		var i=0;
+		bufferImages.map(function(bufferImage){
+			jimp.read(bufferImage.data, function (err, image) {
+				if (err) {
+					log.error('Occured Error while prasing image, '+err);
+					res.send('error');
+					res.status(200).end();
+					return;
+				}
+				if(bufferImage.type == 'weixin'){
+					image.resize(1080, jimp.AUTO).write(path.join(baseUploadDir, req.params.messageId,'weixin_cover.png'));
+				}else{
+					image.resize(100, jimp.AUTO).write(path.join(baseUploadDir, req.params.messageId,'video_cover.png'));
+				}
+			});
+		});
+		res.send('success');
+		res.status(200).end();
+	});
 
-module.exports = router;
+	module.exports = router;

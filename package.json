@@ -18,6 +18,7 @@
     "merge": "~1.2.0",
     "moment":"*",
     "log":"1.4.0",
-    "captchapng":"0.0.1"
+    "captchapng":"0.0.1",
+    "jimp":"0.2.28"
   }
 }
