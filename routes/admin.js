@@ -79,6 +79,15 @@ router.get('/messages/:id', function(req, res, next) {
 				return;
 			}
 
+
+			path.join(baseUploadDir, message._id,'video_cover.png');
+
+			var weixinCoverStat = fs.statSync(path.join(baseUploadDir, message._id,'weixin_cover.png'));
+			var videoCoverStat = fs.statSync(path.join(baseUploadDir, message._id,'video_cover.png'));
+			if(weixinCoverStat.isFile()&&videoCoverStat.isFile()){
+					message.coverUploaded = true;
+			}
+
 			for (var i = message.parts.length; i < message.countOfParts; i++) {
 				message.parts.push({
 					uploaded: false
@@ -217,11 +226,12 @@ router.post('/messages/:messageId/covers', function(req, res){
 		bufferImages.map(function(bufferImage){
 			jimp.read(bufferImage.data, function (err, image) {
 				if (err) {
-					log.error('Occured Error while prasing image, '+err);
+					log.error('Occured error while prasing image, '+err);
 					res.send('error');
 					res.status(200).end();
 					return;
 				}
+
 				if(bufferImage.type == 'weixin'){
 					image.resize(1080, jimp.AUTO).write(path.join(baseUploadDir, req.params.messageId,'weixin_cover.png'));
 				}else{
