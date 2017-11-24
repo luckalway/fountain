@@ -47,7 +47,6 @@ exports.getMessages = function(callback){
         return;
       }
 
-      var messageParts = [];
       body.rows.forEach(function(doc) {
         docsMap[doc.value.messageId]['countOfUploaded']++;
         docsMap[doc.value.messageId]['publishDates'].push(doc.value.publishDate);
@@ -82,6 +81,7 @@ exports.getMessage = function (messageId, callback) {
       messageBody.parts = [];
       body.rows.forEach(function(doc) {
         doc.value.uploaded = true;
+        doc.value.scripture = doc.value.scripture.trim();
         messageBody.parts.push(doc.value);
       });
 

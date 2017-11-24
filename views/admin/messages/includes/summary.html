@@ -1,0 +1,14 @@
+<% if (messageParts[i].summary.type=='image') { %>
+<div class="row" >
+  <% for (var k=0;k<messageParts[i].summary.images.length;k++){ %>
+  <div class="col-xs-3 col-sm-1">
+    <img src="<%=messageParts[i].summary.images[k].url%>" class="img-thumbnail"/>
+    <a href="/download/<%=messageParts[i].summary.images[k].url%>">下载</a>
+  </div>
+  <% } %>
+</div>
+<% } else if (messageParts[i].summary.type=='ppt') { %>
+  <a href="/download/messages/<%=messageParts[i].messageId%>/<%=messageParts[i].partNo%>/<%=messageParts[i].summary.ppt.name%>">下载<%=messageParts[i].summary.ppt.name%></a>
+<% } else {%>
+    <pre id="summary" data-type="textarea" data-pk="<%=messageParts[i]._id%>" data-inputclass="input-xlarge" data-url="/admin/doc/<%=messageParts[i]._id%>" class="editable"><%=messageParts[i].summary || message.summary%></pre>
+<% } %>

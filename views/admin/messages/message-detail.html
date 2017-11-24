@@ -30,278 +30,206 @@
 		img {
 			max-width: 100%; /* This rule is very important, please do not ignore this! */
 		}
-	</style>
 
-</head>
-<body>
-	<% include ../../include/header.html %>
+		label {
+			color: #23527c;
+			font-size: 15px;
+			font-weight: 500;
+		}
 
-	<div id="message-container" class="panel panel-default">
-		<div class="panel-heading">
-			<h3 class="panel-title">
-				<button type="button" class="btn btn-default" aria-label="Left Align">
-					<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-				</button>
-				<%=message.title%> - <span class="label label-default">讲道日期：<%=message.date%></span>
-			</h3>
-		</div>
+		hr{
+			margin:0px;
+		}
+		</style>
 
+	</head>
+	<body>
+		<% include ../../include/header.html %>
 
-		<div class="panel-body" id="message-base-info" style="display: none;">
-			<% if(!message.coverUploaded){ %>
-			<div class="panel panel-default">
-				<div class="panel-body">
-					<div id="previewImageUploader">上传封面图</div>
-				</div>
+		<div id="message-container" class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					<button type="button" class="btn btn-default" aria-label="Left Align">
+						<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+					</button>
+					<%=message.title%> - <span class="label label-default">讲道日期：<%=message.date%></span>
+				</h3>
 			</div>
-			<% } %>
 
-			<div class="panel panel-info">
-				<div class="panel-heading">
-					<h3 class="panel-title">标题：</h3>
-				</div>
-				<div class="panel-body editable" id="title" data-type="text" data-pk="<%=message._id%>" data-inputclass="editable-text" data-url="/admin/doc/<%=message._id%>">
-					<%=message.title%>
+
+			<div class="panel-body" id="message-base-info" style="display: none;">
+				<% if(!message.coverUploaded){ %>
+					<div class="panel panel-default">
+						<div class="panel-body">
+							<div id="previewImageUploader">上传封面图</div>
+						</div>
+					</div>
+					<% } %>
+
+					<div class="panel panel-info">
+						<div class="panel-body">标题：<%=message.title%></div>
+						<div class="panel-body">
+							<label style="float:left;">经文：</label><pre><%=message.scripture%></pre>
+						</div>
+						<div class="panel-body"><label style="float:left;">讲章：</label><pre><%=message.summary%></pre></div>
+					</div>
 				</div>
 
-				<div class="panel-heading">
-					<h3 class="panel-title">经文</h3>
-				</div>
-				<div class="panel-body"><pre><%=message.scripture%></pre></div>
-			</div>
-			<div class="panel panel-info">
-				<div class="panel-heading">
-					<h3 class="panel-title">讲章</h3>
-				</div>
-				<div class="panel-body"><pre><%=message.summary%></pre></div>
-			</div>
-		</div>
-
-		<!-- Nav tabs -->
-		<ul class="nav nav-tabs" role="tablist" id="summary-tabs">
-			<% for (var i=0;i<messageParts.length;i++){ %>
-				<li role="presentation" <%if(messageParts[i].uploaded&&i==0){%>class="active"<%}%>>
-					<% if(messageParts[i].uploaded){ %>
-						<a href="#part-<%=i+1%>" aria-controls="summary-text" role="tab" data-toggle="tab">
-							第<%=i+1%>段 - <span class="label label-primary">推送 日期：<%=messageParts[i].publishDate%></span>
-						</a>
-						<% } else { %>
-						<a href="/admin/messages/<%=message._id%>/parts/<%=i+1%>" target="_blank" role="tab">
-							第<%=i+1%>段(未上传，马上上传)
-						</a>
-						<% } %>
-					</li>
-				<% } %>
-			</ul>
+				<!-- Nav tabs -->
+				<ul class="nav nav-tabs" role="tablist" id="summary-tabs">
+					<% for (var i=0;i<messageParts.length;i++){ %>
+						<li role="presentation" <%if(messageParts[i].uploaded&&i==0){%>class="active"<%}%>>
+							<% if(messageParts[i].uploaded){ %>
+								<a href="#part-<%=i+1%>" aria-controls="summary-text" role="tab" data-toggle="tab">
+									第<%=i+1%>段 - <span class="label label-primary">推送 日期：<%=messageParts[i].publishDate%></span>
+								</a>
+								<% } else { %>
+									<a href="/admin/messages/<%=message._id%>/parts/<%=i+1%>" target="_blank" role="tab">
+										第<%=i+1%>段(未上传，马上上传)
+									</a>
+									<% } %>
+								</li>
+								<% } %>
+							</ul>
 
 							<!-- Tab panes -->
 							<div class="tab-content">
 								<% for (var i=0;i<messageParts.length;i++){ %>
-									<div role="tabpanel" class="tab-pane <%if(messageParts[i].uploaded&&i==0){%>active<%}%>" id="part-<%=i+1%>">
-										<% if(messageParts[i].uploaded){ %>
-											<div class="panel-body">
-												<div class="panel panel-info">
-													<div class="panel-heading">
-														<h3 class="panel-title">标题：</h3>
-													</div>
-													<div class="panel-body">
-														<%=message.title%>(<%=i+1%>/<%=message.countOfParts%>)
-													</div>
+									<% include includes/message-part.html %>
+								<% } %>
+								</div>
+							</div>
 
-													<div class="panel-heading">
-														<h3 class="panel-title">经文</h3>
-													</div>
-													<div class="panel-body">
-														<pre id="scripture" data-type="textarea" data-pk="<%=messageParts[i]._id%>" data-inputclass="input-xlarge"
-															data-url="/admin/doc/<%=messageParts[i]._id%>" class="editable"><%=messageParts[i].scripture || message.scripture %>
-														</pre>
+							<!-- Modal -->
+							<div class="modal fade" id="modal" aria-labelledby="modalLabel" role="dialog" tabindex="-1">
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="modalLabel">裁剪图片</h5>
+										</div>
+										<div class="modal-body" id="modalBody">
+											<div class="row clearfix">
+												<div class="col-md-9 column" id="coverImageContainer">
+													<img id="coverImage" src="" alt="Picture">
+												</div>
+												<div class="col-md-3 column">
+													<div class="panel panel-default">
+														<div class="panel-heading">
+															<h3 class="panel-title">
+																预览
+															</h3>
+														</div>
+														<div class="panel-body">
+															<label>视频封面</label>
+															<hr style="margin:2px 0 8px;border-top: 2px solid #BDB76B;">
+															<img id="videoCoverPreview" src="/images/noimageavailable.png"/><br><br>
+															<label>小程序封面</label>
+															<hr style="margin:2px 0 8px;border-top: 2px solid #BDB76B;">
+															<img id="weixinCoverPreview" src="/images/noimageavailable.png"/><br>
+														</div>
 													</div>
 												</div>
-												<div class="panel panel-info">
-													<div class="panel-heading">
-														<h3 class="panel-title">讲章和音频(图片右击保存)</h3>
-													</div>
-													<div class="panel-body">
-														<% if(messageParts[i].uploaded){ %>
-															<% if (messageParts[i].summary.type=='image') { %>
-																<div class="row" >
-																	<% for (var k=0;k<messageParts[i].summary.images.length;k++){ %>
-																		<div class="col-xs-3 col-sm-1">
-																			<img src="<%=messageParts[i].summary.images[k].url%>" class="img-thumbnail"/>
-																		</div>
-																		<% } %>
-																	</div>
-																	<% } else if (messageParts[i].summary.type=='ppt') { %>
-																		(点击下载讲章PPT)&nbsp;<a href="/admin/download/<%=messageParts[i].messageId%>/<%=messageParts[i].partNo%>/<%=messageParts[i].summary.ppt.name%>"><%=messageParts[i].summary.ppt.name%></a>
-																		<% } else {%>
-																			<pre id="summary" data-type="textarea" data-pk="<%=messageParts[i]._id%>" data-inputclass="input-xlarge" data-url="/admin/doc/<%=messageParts[i]._id%>" class="editable"><%=messageParts[i].summary || message.summary%></pre>
-																			<% } %>
-																			<% if (messageParts[i].audio) { %>
-																				<div class="row" >
-																					<div class="col-xs-3 col-sm-1">
-																						<a target="_blank" id="audio-url" href="/admin/download/<%=messageParts[i].messageId%>/<%=messageParts[i].partNo%>/<%=messageParts[i].audio.filename%>">下载音频</a>
-																					</div>
-																				</div>
-																				<% } %>
-																				<% } %>
-																			</div>
-																			<div class="panel panel-info">
-																				<div class="panel-heading">
-																					<h3 class="panel-title">小程序路径</h3>
-																				</div>
-																				<div class="panel-body">
-																					<pre>pages/message/message?partId=<%=messageParts[i]._id%></pre>
-																					<% if(message.coverUploaded){ %>
-																					<a href="/download/messages/<%=message._id%>/weixin_cover.png">下载小程序封面</a>
-																					<% } %>
-																				</div>
-																			</div>
-																			<div class="panel panel-info">
-																				<div class="panel-heading">
-																					<h3 class="panel-title">视频播放地址</h3>
-																				</div>
-																				<div class="panel-body">
-																					<a target="_blank" id="video-player-url" href="<%=videoPlayerUrl%>/messages/<%=messageParts[i]._id%>/video"><%=videoPlayerUrl%>/messages/<%=messageParts[i]._id%>/video</a>
-																				</div>
-																			</div>
-																		</div>
-																	</div>
-																	<% } %>
-																</div>
-																<% } %>
-															</div>
-														</div>
+											</div>
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-default" id="videoCoverButton">制作视频封面</button>
+											<button type="button" class="btn btn-default" id="weixinCoverButton">制作小程序封面</button>
+											<button type="button" class="btn btn-default" id="clipButton">截取</button>
+											<button type="button" class="btn btn-default disabled" id="saveButton">保存</button>
+											<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 
-														<!-- Modal -->
-														<div class="modal fade" id="modal" aria-labelledby="modalLabel" role="dialog" tabindex="-1">
-															<div class="modal-dialog" role="document">
-																<div class="modal-content">
-																	<div class="modal-header">
-																		<h5 class="modal-title" id="modalLabel">裁剪图片</h5>
-																	</div>
-																	<div class="modal-body" id="modalBody">
-																		<div class="row clearfix">
-																			<div class="col-md-9 column" id="coverImageContainer">
-																				<img id="coverImage" src="" alt="Picture">
-																			</div>
-																			<div class="col-md-3 column">
-																				<div class="panel panel-default">
-																					<div class="panel-heading">
-																						<h3 class="panel-title">
-																							预览
-																						</h3>
-																					</div>
-																					<div class="panel-body">
-																						<label>视频封面</label>
-																						<hr style="margin:2px 0 8px;border-top: 2px solid #BDB76B;">
-																						<img id="videoCoverPreview" src="/images/noimageavailable.png"/><br><br>
-																						<label>小程序封面</label>
-																						<hr style="margin:2px 0 8px;border-top: 2px solid #BDB76B;">
-																						<img id="weixinCoverPreview" src="/images/noimageavailable.png"/><br>
-																					</div>
-																				</div>
-																			</div>
-																		</div>
-																	</div>
-																	<div class="modal-footer">
-																		<button type="button" class="btn btn-default" id="videoCoverButton">制作视频封面</button>
-																		<button type="button" class="btn btn-default" id="weixinCoverButton">制作小程序封面</button>
-																		<button type="button" class="btn btn-default" id="clipButton">截取</button>
-																		<button type="button" class="btn btn-default disabled" id="saveButton">保存</button>
-																		<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-																	</div>
-																</div>
-															</div>
-														</div>
-													</div>
+						<script type="text/javascript">
+						$(function() {
+							$("#message-container").find("button").click(function() {
+								var glyphicon = $(this).find(".glyphicon");
+								if (glyphicon.hasClass("glyphicon-plus")) {
+									$("#message-base-info").slideDown(500,function(){
+										glyphicon.removeClass('glyphicon-plus');
+										glyphicon.addClass('glyphicon-minus');
+									});
+								} else {
+									$("#message-base-info").slideUp(500,function(){
+										glyphicon.removeClass('glyphicon-minus');
+										glyphicon.addClass('glyphicon-plus');
+									});
+								}
+							});
 
-													<script type="text/javascript">
-													$(function() {
-														$("#message-container").find("button").click(function() {
-															var glyphicon = $(this).find(".glyphicon");
-															if (glyphicon.hasClass("glyphicon-plus")) {
-																$("#message-base-info").slideDown(500,function(){
-																	glyphicon.removeClass('glyphicon-plus');
-																	glyphicon.addClass('glyphicon-minus');
-																});
-															} else {
-																$("#message-base-info").slideUp(500,function(){
-																	glyphicon.removeClass('glyphicon-minus');
-																	glyphicon.addClass('glyphicon-plus');
-																});
-															}
-														});
+							$("#previewImageUploader").uploadFile({
+								uploadStr : "上传封面图(jpg、png、jpeg)",
+								allowedTypes: 'jpg,png,jpeg',
+								extErrorStr: '格式不正确，只允许的格式：',
+								url : "/admin/messages/<%=message._id%>/cover",
+								fileName : "cover",
+								onSuccess : function(files, data, xhr, pd) {
+									$('#previewImageUploader').hide();
+									var data = JSON.parse(data);
+									//$(divToResize).css('height',$(container).innerHeight());
+									$('#coverImage').attr('src', data['files'][0]['url']);
+									$('#modal').modal();
+								}
+							});
 
-														$("#previewImageUploader").uploadFile({
-															uploadStr : "上传封面图(jpg、png、jpeg)",
-															allowedTypes: 'jpg,png,jpeg',
-															extErrorStr: '格式不正确，只允许的格式：',
-															url : "/admin/messages/<%=message._id%>/cover",
-															fileName : "cover",
-															onSuccess : function(files, data, xhr, pd) {
-																$('#previewImageUploader').hide();
-																var data = JSON.parse(data);
-																//$(divToResize).css('height',$(container).innerHeight());
-																$('#coverImage').attr('src', data['files'][0]['url']);
-																$('#modal').modal();
-															}
-														});
+							var $image = $('#coverImage');
+							$('#modal').on('shown.bs.modal', function () {
+								$('#coverImageContainer').css('height',$('#modalBody').innerHeight());
+								$image.cropper({
+									autoCropArea: 0.8,
+								});
+								$('#videoCoverButton').click();
+							}).on('hidden.bs.modal', function () {
+								$image.cropper('destroy');
+							});
 
-														var $image = $('#coverImage');
-														$('#modal').on('shown.bs.modal', function () {
-															$('#coverImageContainer').css('height',$('#modalBody').innerHeight());
-															$image.cropper({
-																autoCropArea: 0.8,
-															});
-															$('#videoCoverButton').click();
-														}).on('hidden.bs.modal', function () {
-															$image.cropper('destroy');
-														});
+							$('#modal').find('.btn').click(function(){
+								$('#modal').find('.btn').removeClass('active');
+								$(this).addClass('active');
+							});
 
-														$('#modal').find('.btn').click(function(){
-															$('#modal').find('.btn').removeClass('active');
-															$(this).addClass('active');
-														});
-
-														$('#weixinCoverButton').click(function(){
-															$image.cropper('setAspectRatio',1080/864);
-															$('#clipButton').data('type', 'weixin');
-														});
+							$('#weixinCoverButton').click(function(){
+								$image.cropper('setAspectRatio',1080/864);
+								$('#clipButton').data('type', 'weixin');
+							});
 
 
-														$('#videoCoverButton').click(function(){
-															$image.cropper('setAspectRatio',1080/864);
-															$('#clipButton').data('type', 'video');
-														});
+							$('#videoCoverButton').click(function(){
+								$image.cropper('setAspectRatio',1080/864);
+								$('#clipButton').data('type', 'video');
+							});
 
-														var weixinDef = $.Deferred();
-														var videoDef = $.Deferred();
-														$('#clipButton').click(function(){
-															var croppedCanvas = $image.cropper('getCroppedCanvas');
-															if($(this).data('type') == 'video'){
-																$('#videoCoverPreview').attr('src', croppedCanvas.toDataURL());
-																videoDef.resolve('video');
-															}else if($(this).data('type') == 'weixin'){
-																$('#weixinCoverPreview').attr('src', croppedCanvas.toDataURL());
-																weixinDef.resolve('weixin');
-															}
-														});
+							var weixinDef = $.Deferred();
+							var videoDef = $.Deferred();
+							$('#clipButton').click(function(){
+								var croppedCanvas = $image.cropper('getCroppedCanvas');
+								if($(this).data('type') == 'video'){
+									$('#videoCoverPreview').attr('src', croppedCanvas.toDataURL());
+									videoDef.resolve('video');
+								}else if($(this).data('type') == 'weixin'){
+									$('#weixinCoverPreview').attr('src', croppedCanvas.toDataURL());
+									weixinDef.resolve('weixin');
+								}
+							});
 
-														$.when(weixinDef, videoDef).then(function(){
-															$('#saveButton').removeClass('disabled');
-														});
+							$.when(weixinDef, videoDef).then(function(){
+								$('#saveButton').removeClass('disabled');
+							});
 
-														$('#saveButton').click(function(){
-															$.post('/admin/messages/<%=message._id%>/covers',{
-																weixinCover:$('#weixinCoverPreview').attr('src').split(',')[1],
-																videoCover:$('#videoCoverPreview').attr('src').split(',')[1]
-															},function(res){
-																if(res == 'success'){
-																	location.reload();
-																}
-															})
-														})
-													});
-													</script>
-												</body>
-												</html>
+							$('#saveButton').click(function(){
+								$.post('/admin/messages/<%=message._id%>/covers',{
+									weixinCover:$('#weixinCoverPreview').attr('src').split(',')[1],
+									videoCover:$('#videoCoverPreview').attr('src').split(',')[1]
+								},function(res){
+									if(res == 'success'){
+										location.reload();
+									}
+								})
+							})
+						});
+						</script>
+					</body>
+					</html>

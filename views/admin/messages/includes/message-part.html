@@ -1,0 +1,46 @@
+<div role="tabpanel" class="tab-pane <%if(messageParts[i].uploaded&&i==0){%>active<%}%>" id="part-<%=i+1%>">
+  <% if(messageParts[i].uploaded){ %>
+  <div class="panel-body">
+    <div class="panel panel-info">
+      <div class="panel-body">
+        <label>标题：</label><%=message.title%>(<%=i+1%>/<%=message.countOfParts%>)
+      </div>
+      <hr>
+      <div class="panel-body">
+        <label style="float:left;">经文：</label>
+        <pre id="scripture" data-type="textarea" data-pk="<%=messageParts[i]._id%>" data-inputclass="input-xlarge"
+          data-url="/admin/doc/<%=messageParts[i]._id%>" class="editable"><%=messageParts[i].scripture || message.scripture %>
+        </pre>
+      </div>
+      <hr>
+
+      <div class="panel-body">
+        <label style="float:left;">讲章：</label>
+        <% include summary.html %>
+      </div>
+      <hr>
+
+      <div class="panel-body">
+        <label>资料下载:</label>
+        <% if(message.coverUploaded){ %>
+        <a href="/download/messages/<%=message._id%>/weixin_cover.png">小程序封面</a>
+        <% } %>
+
+        <% if (messageParts[i].audio) { %>
+        <a target="_blank" id="audio-url" href="/download/messages/<%=messageParts[i].messageId%>/<%=messageParts[i].partNo%>/<%=messageParts[i].audio.filename%>">音频</a>
+        <% } %>
+      </div>
+      <hr>
+      
+      <div class="panel-body">
+        <label>小程序路径：</label>pages/message/message?partId=<%=messageParts[i]._id%>
+      </div>
+      <hr>
+
+      <div class="panel-body">
+        <label>视频播放地址：</label><a target="_blank" id="video-player-url" href="<%=videoPlayerUrl%>/messages/<%=messageParts[i]._id%>/video"><%=videoPlayerUrl%>/messages/<%=messageParts[i]._id%>/video</a>
+      </div>
+    </div>
+  </div>
+  <% } %>
+</div>
