@@ -82,9 +82,9 @@ router.get('/messages/:id', function(req, res, next) {
 
 			path.join(baseUploadDir, message._id,'video_cover.png');
 
-			var weixinCoverStat = fs.statSync(path.join(baseUploadDir, message._id,'weixin_cover.png'));
-			var videoCoverStat = fs.statSync(path.join(baseUploadDir, message._id,'video_cover.png'));
-			if(weixinCoverStat.isFile()&&videoCoverStat.isFile()){
+			var weixinCoverExists = fs.existsSync(path.join(baseUploadDir, message._id,'weixin_cover.png'));
+			var videoCoverExists = fs.existsSync(path.join(baseUploadDir, message._id,'video_cover.png'));
+			if(weixinCoverExists&&videoCoverExists){
 					message.coverUploaded = true;
 			}
 
@@ -233,9 +233,9 @@ router.post('/messages/:messageId/covers', function(req, res){
 				}
 
 				if(bufferImage.type == 'weixin'){
-					image.resize(1080, jimp.AUTO).write(path.join(baseUploadDir, req.params.messageId,'weixin_cover.png'));
+					image.resize(1080, jimp.AUTO).write(path.join(baseUploadDir, req.params.messageId,'weixin_cover.jpg'));
 				}else{
-					image.resize(100, jimp.AUTO).write(path.join(baseUploadDir, req.params.messageId,'video_cover.png'));
+					image.resize(860, jimp.AUTO).quality(60).write(path.join(baseUploadDir, req.params.messageId,'video_cover.jpg'));
 				}
 			});
 		});

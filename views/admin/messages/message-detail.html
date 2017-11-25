@@ -6,17 +6,14 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 	<% include ../../include/script.html %>
+	<link href="/framework/xeditable/bootstrap-editable.css" rel="stylesheet"/>
+	<link href="/framework/jquery.uploadfile/uploadfile.css" rel="stylesheet">
+	<link href="/framework/cropper/cropper.min.css" rel="stylesheet">
 
-	<% if(signedIn.role == 'shipin'){ %>
-		<link href="/framework/xeditable/bootstrap-editable.css" rel="stylesheet"/>
-		<link href="/framework/jquery.uploadfile/uploadfile.css" rel="stylesheet">
-		<link href="/framework/cropper/cropper.min.css" rel="stylesheet">
-
-		<script src="/framework/xeditable/bootstrap-editable.min.js"></script>
-		<script src="/framework/jquery.uploadfile/jquery.uploadfile.min.js"></script>
-		<script src="/framework/jquery.form-validator/jquery.form-validator.min.js"></script>
-		<script src="/framework/cropper/cropper.min.js"></script>
-		<% } %>
+	<script src="/framework/xeditable/bootstrap-editable.min.js"></script>
+	<script src="/framework/jquery.uploadfile/jquery.uploadfile.min.js"></script>
+	<script src="/framework/jquery.form-validator/jquery.form-validator.min.js"></script>
+	<script src="/framework/cropper/cropper.min.js"></script>
 
 		<style type="text/css">
 		.return {
@@ -55,7 +52,6 @@
 					<%=message.title%> - <span class="label label-default">讲道日期：<%=message.date%></span>
 				</h3>
 			</div>
-
 
 			<div class="panel-body" id="message-base-info" style="display: none;">
 				<% if(!message.coverUploaded){ %>
@@ -198,7 +194,7 @@
 
 
 							$('#videoCoverButton').click(function(){
-								$image.cropper('setAspectRatio',1080/864);
+								$image.cropper('setAspectRatio',1080/660);
 								$('#clipButton').data('type', 'video');
 							});
 
@@ -207,10 +203,10 @@
 							$('#clipButton').click(function(){
 								var croppedCanvas = $image.cropper('getCroppedCanvas');
 								if($(this).data('type') == 'video'){
-									$('#videoCoverPreview').attr('src', croppedCanvas.toDataURL());
+									$('#videoCoverPreview').attr('src', croppedCanvas.toDataURL("image/jpeg"));
 									videoDef.resolve('video');
 								}else if($(this).data('type') == 'weixin'){
-									$('#weixinCoverPreview').attr('src', croppedCanvas.toDataURL());
+									$('#weixinCoverPreview').attr('src', croppedCanvas.toDataURL("image/jpeg"));
 									weixinDef.resolve('weixin');
 								}
 							});

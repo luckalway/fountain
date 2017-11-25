@@ -15,13 +15,12 @@
 
 </style>
 <% include include/script.html %>
-<% var videoPreview = currentPart.preview?currentPart.preview.url:''; %>
 </head>
 <body>
 	<div class="container-fluid">
 		<div class="row-fluid">
 			<div class="col-sm-12 col-md-8" style="padding: 0;">
-				<video id="message-video" style="width:100%;"  poster="<%=videoPreview%>" class="video-js vjs-default-skin col-sm-12 col-md-4" controls="controls">
+				<video id="message-video" style="width:100%;"  poster="/data/messages/<%=message._id%>/video_cover.jpg" class="video-js vjs-default-skin col-sm-12 col-md-4" controls="controls">
 					<source src="<%=currentPart.video.url%>" type="video/mp4" />
 						<source src="<%=currentPart.video.url%>" type="video/webm" />
 							<source src="<%=currentPart.video.url%>" type="video/ogg" />
