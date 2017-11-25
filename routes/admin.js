@@ -82,8 +82,8 @@ router.get('/messages/:id', function(req, res, next) {
 
 			path.join(baseUploadDir, message._id,'video_cover.png');
 
-			var weixinCoverExists = fs.existsSync(path.join(baseUploadDir, message._id,'weixin_cover.png'));
-			var videoCoverExists = fs.existsSync(path.join(baseUploadDir, message._id,'video_cover.png'));
+			var weixinCoverExists = fs.existsSync(path.join(baseUploadDir, message._id,'weixin_cover.jpg'));
+			var videoCoverExists = fs.existsSync(path.join(baseUploadDir, message._id,'video_cover.jpg'));
 			if(weixinCoverExists&&videoCoverExists){
 					message.coverUploaded = true;
 			}
