@@ -23,7 +23,7 @@
       <div class="panel-body">
         <label>资料下载:</label>
         <% if(message.coverUploaded){ %>
-        <a href="/download/messages/<%=message._id%>/weixin_cover.png">小程序封面</a>
+        <a href="/download/messages/<%=message._id%>/weixin_cover.jpg">小程序封面</a>
         <% } %>
 
         <% if (messageParts[i].audio) { %>
@@ -31,7 +31,7 @@
         <% } %>
       </div>
       <hr>
-      
+
       <div class="panel-body">
         <label>小程序路径：</label>pages/message/message?partId=<%=messageParts[i]._id%>
       </div>

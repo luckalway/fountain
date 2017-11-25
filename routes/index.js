@@ -11,7 +11,8 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/download/*', function(req, res) {
+
 	var url = req.originalUrl.replace('/data','')
 	var downloadPath = path.join(CONF.baseUploadDir, url.replace('download',''));
-	res.download(downloadPath, path.basename(downloadPath));
+	res.download(decodeURIComponent(downloadPath), decodeURIComponent(path.basename(downloadPath)));
 });

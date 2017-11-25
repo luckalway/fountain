@@ -56,6 +56,7 @@ app.use(session({
 app.use(function(req, res, next) {
 	res.locals.signedIn = req.session.signedIn;
 	res.locals.videoPlayerUrl = CONF.videoPlayerUrl;
+  res.locals.baseUploadDir = CONF.baseUploadDir;
 	res.removeHeader("X-Powered-By");
 	next();
 });
