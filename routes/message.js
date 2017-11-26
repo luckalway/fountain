@@ -1,7 +1,9 @@
 var express = require('express');
 var moment = require('moment');
-
+var path = require('path');
 var router = express.Router();
+
+var baseUploadUrl = path.join(CONF.baseUploadUrl, 'messages');
 
 router.get('messages', function(req, res, next) {
 
@@ -23,15 +25,14 @@ router.get('/messages/:resourceId/video', function(req, res, next) {
 		if (!err) {
 			var messageBody, currentPart;
 			var allMessageParts = [];
-			var defaultPreview = null;
+
 			body.rows.forEach(function(doc) {
 				if(doc.value.table == 'message_part'){
-					if(doc.value.preview){
-						defaultPreview = doc.value.preview;
-					}
-					allMessageParts.push(doc.value);
+					var part = doc.value;
+					allMessageParts.push(part);
 				}else if(doc.value.table == 'message'){
 					messageBody = doc.value;
+					messageBody['scripture'] = messageBody.scripture.replace(/[\r\n]+/g, "<br/>");
 				}
 				if(doc.value._id == resourceId){
 					currentPart = doc.value;
@@ -43,22 +44,59 @@ router.get('/messages/:resourceId/video', function(req, res, next) {
 				var isBeforeToday = moment(allMessageParts[i].publishDate, "YYYY-MM-DD").endOf('day').isBefore(new Date());
 				var isBeforeOrSameCurrent = parseInt(currentPart.partNo) >= parseInt(allMessageParts[i].partNo);
 				if(isBeforeToday || isBeforeOrSameCurrent){
-					allMessageParts[i].preview = defaultPreview;
 					var scripture = allMessageParts[i]['scripture'].trim() || messageBody.scripture;
 					scripture = scripture.replace(/[\r\n]+/g, "<br/>");
 					allMessageParts[i]['scripture'] = scripture;
 					displayedMessageParts.push(allMessageParts[i]);
 				}
 			}
-		//	console.log(displayedMessageParts);
-			res.render('message-video', {
+
+			var viewTemplate = 'message-video';
+			if(messageBody.title.trim().startsWith('【讲台】')){
+				viewTemplate = 'message-video-jiangtai';
+			}
+
+			res.render(viewTemplate, {
 				message : messageBody,
+				summary: getSummary(displayedMessageParts),
 				currentPart: currentPart,
 				messageParts : displayedMessageParts
 			});
 		}
 	});
 
+	function getSummary(messageParts){
+		var getSummaryImages = function(part){
+			if(!part.summary.imageNames)
+				return [];
+
+			var images = [];
+			part.summary.imageNames.forEach(function(imageName){
+				images.push(path.join(baseUploadUrl, part.messageId, part.partNo, imageName));
+			});
+			return images;
+		}
+
+		var summary = {};
+		messageParts.forEach(function(part){
+			if(!summary['type']){
+				if(!part.summary.type){
+					summary.type = 'text';
+					summary.texts = [];
+					summary.texts.push(part.summary);
+				}else if(part.summary.type == 'image'){
+					summary.images = [];
+					summary.type = 'image';
+					summary.images = getSummaryImages(part);
+				}
+			}else if(summary['type'] == 'image' && part.summary.type == 'image'){
+				summary.images = summary.images.concat(getSummaryImages(part));
+			}else if(summary['type'] == 'text' && part.summary.type == 'text'){
+				summary.texts.push(part.summary);
+			}
+		});
+		return summary;
+	}
 
 });
 

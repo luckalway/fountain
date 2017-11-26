@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html lang=en>
+<head>
+	<meta name=viewport
+	content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+	<meta charset=UTF-8>
+	<meta name=format-detection content="telephone=no, email=no">
+	<title><%=message.title%>(<%=currentPart.partNo%>/<%=message.countOfParts%>)</title>
+	<link href="/framework/videojs/video-js.css" rel="stylesheet">
+	<style type="text/css">
+	.container-fluid {
+		padding: 10px 0 0 !important;
+	}
+
+</style>
+<% include include/script.html %>
+</head>
+<body>
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="col-sm-12 col-md-8" style="padding: 0;">
+				<video id="message-video" style="width:100%;"  poster="/data/messages/<%=message._id%>/video_cover.jpg" class="video-js vjs-default-skin col-sm-12 col-md-4" controls="controls">
+					<source src="<%=currentPart.video.url%>" type="video/mp4" />
+					<source src="<%=currentPart.video.url%>" type="video/webm" />
+					<source src="<%=currentPart.video.url%>" type="video/ogg" />
+								您的浏览器不支持 video标签。
+				</video>
+			</div>
+			<div class="col-sm-12 col-md-4" style="padding: 0;">
+				<ul id="myTab" class="nav nav-tabs">
+				 	<li class="active"><a href="#video-list" data-toggle="tab">视频列表</a></li>
+				 	<li><a href="#scripture" data-toggle="tab">经文</a></li>
+					<li><a href="#summary" data-toggle="tab">概要</a></li>
+				</ul>
+				<div class="tab-content">
+				 	<div class="tab-pane active" id="video-list">
+						<ul class="list-group">
+							<%for (var i=0;i<messageParts.length ;i++){%>
+							<li class="list-group-item message-item <%if(messageParts[i]._id == currentPart._id){%>active<%}%>" data-video-src="<%=messageParts[i].video.url%>">
+								<%=message.title%>(<%=messageParts[i].partNo%>/<%=message.countOfParts%>)
+							</li>
+							<% } %>
+							</ul>
+				 	</div>
+				 	<div class="tab-pane fade" id="scripture">
+						<div class="scripture">
+							<%-message.scripture%>
+						</div>
+				 	</div>
+					<div class="tab-pane fade" id="summary">
+							<% if(summary.type == 'text'){ %>
+							<div class="scripture">
+							<%for (var i=0;i<summary.texts.length ;i++){%>
+								<hr>
+								<%- summary.texts[i]%>
+							<% } %>
+							</div>
+							<% } %>
+
+							<% if(summary.type == 'image'){ %>
+							<%for (var i=0;i<summary.images.length ;i++){%>
+								<hr>
+								<img src='<%=summary.images[i]%>'/>
+							<% } %>
+							<% } %>
+				 	</div>
+				</div>
+			</div>
+
+		</div>
+</div>
+
+<script src="/framework/videojs/video.js"></script>
+<script type="text/javascript">
+$("#message-video").height($("#message-video").width()/1.6);
+$(window).resize(function(){
+	$("#message-video").height($("#message-video").width()/1.6);
+});
+
+var player = videojs('message-video');
+player.ready(function(){
+	$(".message-item").click(function(){
+		if($(this).hasClass('active')&&!player.paused()){
+				return false;
+		}
+
+		player.pause();
+		$(".message-item").removeClass('active');
+		$(this).addClass('active');
+
+		player.src([
+			{type: "video/mp4", src: $(this).data('video-src')},
+			{type: "video/webm", src: $(this).data('video-src')},
+			{type: "video/ogg", src: $(this).data('video-src')}
+		]);
+	});
+
+});
+</script>
+
+</body>
+</html>
