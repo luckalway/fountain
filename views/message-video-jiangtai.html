@@ -49,21 +49,20 @@
 						</div>
 				 	</div>
 					<div class="tab-pane fade" id="summary">
+						<div class="scripture">
 							<% if(summary.type == 'text'){ %>
-							<div class="scripture">
 							<%for (var i=0;i<summary.texts.length ;i++){%>
 								<hr>
 								<%- summary.texts[i]%>
 							<% } %>
-							</div>
 							<% } %>
 
 							<% if(summary.type == 'image'){ %>
 							<%for (var i=0;i<summary.images.length ;i++){%>
-								<hr>
-								<img src='<%=summary.images[i]%>'/>
-							<% } %>  
+								<img style="width:100%;" src='<%=summary.images[i]%>'/>
 							<% } %>
+							<% } %>
+							</div>
 				 	</div>
 				</div>
 			</div>
