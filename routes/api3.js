@@ -10,8 +10,9 @@ var baseUploadUrl = CONF.videoSourceUrl;
 router.get('/messages', function(req, res, next) {
 	messageService.getMessageWithoutParts(function(err,body){
 		if(!err){
-			//res.send(body);
-      res.send([]);
+			var test = [];
+			test.push(body[0]);
+			res.send(test);
 			res.status(200).end();
 		}
 	});
@@ -39,7 +40,7 @@ router.get('/messages/:id/videos', function(req, res, next) {
 				});
 			}
 		}
-		
+
 		res.send({
 			message:message,
 			parts:messageParts
