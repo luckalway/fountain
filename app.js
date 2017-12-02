@@ -32,6 +32,7 @@ var signIn = require('./routes/signIn');
 var message = require('./routes/message');
 var api = require('./routes/api');
 var api2 = require('./routes/api2');
+var api3 = require('./routes/api3');
 
 
 // view engine setup
@@ -65,8 +66,11 @@ app.use('/', index);
 app.use('/sign-in', signIn);
 app.use('/admin', admin);
 app.use('/admin/docs', express.static(path.join(__dirname, 'docs')));
+
 app.use('/api', api);
 app.use('/api/v2', api2);
+app.use('/api/v3', api3);
+
 app.use('/', message);
 app.use('/signout', function(req, res, next) {
 	req.session.signedIn = undefined;
