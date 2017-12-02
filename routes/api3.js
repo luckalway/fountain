@@ -39,8 +39,7 @@ router.get('/messages/:id/videos', function(req, res, next) {
 				});
 			}
 		}
-
-		message.summary = '<b>ddd</b>'
+		
 		res.send({
 			message:message,
 			parts:messageParts
