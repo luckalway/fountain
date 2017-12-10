@@ -29,18 +29,11 @@ router.get('/messages/:id/videos', function(req, res, next) {
 			var isBeforeToday = moment(part.publishDate, "YYYY-MM-DD").endOf('day').isBefore(new Date());
 			var isBeforeOrSameCurrent = parseInt(partNo) >= parseInt(part.partNo);
 			if(isBeforeToday || isBeforeOrSameCurrent){
-				messageParts.push({
-					id : part._id,
-					videoUrl : baseUploadUrl + part.video.url,
-					audioUrl: baseUploadUrl + part.audio.url,
-					partNo: part.partNo,
-					title : message.title + '(' + part.partNo + '/'
-							+ message.countOfParts + ')',
-					date : message.date || ""
-				});
+				messageParts.push(part);
 			}
 		}
 
+		delete message.parts;
 		res.send({
 			message:message,
 			parts:messageParts
