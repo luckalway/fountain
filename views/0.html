@@ -1,0 +1,502 @@
+<form id="[cat_tag:namespace]form"></form>
+<script type="text/javascript">
+$(function(){
+
+  var formElements = {};
+  var form = $('#[cat_tag:namespace]form');
+
+  PROJECT.template.outPutHTML($('<p>'+catPortalNLSJSON.scheduleServiceHeader+'</p>'), form);
+
+  console.log(PROJECT.utility.getUrlParameter('asset'));
+  var asset = JSON.parse(PROJECT.utility.getUrlParameter('asset'));
+
+  console.log(asset);
+  var serialNumber = asset.serialNumber;
+  var assetId = asset.assetId;
+  var make = asset.make;
+  if(asset.product)
+    var product = asset.product.label;
+  var model = asset.model;
+  var serviceMeter = 99;
+
+  PROJECT.template.outPutHTML($('<p><div class="margin-bottom-10"><label>'+catPortalNLSJSON.snTxt+': '+serialNumber+'</label></div>'
+  + '<div class="margin-bottom-10"><label>'+catPortalNLSJSON.assetIdTxt+': '+assetId+'</label></div>'
+  + '<div class="margin-bottom-10"><label>'+catPortalNLSJSON.makeTxt+': '+make+'</label></div>'
+  + '<div class="margin-bottom-10"><label>'+catPortalNLSJSON.productTxt+': '+product+'</label></div>'
+  + '<div class="margin-bottom-10"><label>'+catPortalNLSJSON.modelTxt+': '+model+'</label></div></p>'), form);
+
+  PROJECT.template.getSectionTitle({
+    text : catPortalNLSJSON.appointmentPreferencesLabelTxt,
+    appendTo : form
+  });
+
+  PROJECT.template.outPutHTML($('<p>'+catPortalNLSJSON.appointmentPreferencesHeaderTxt+'</p>'),form);
+
+  formElements.preferredDate = PROJECT.template.formRow({
+    ns : '[cat_tag:namespace]',
+    text : catPortalNLSJSON.preferredDateTxt,
+    type : 'datepicker',
+    id : 'preferredDate',
+    value : new Date(),
+    appendTo : form,
+    startDate : new Date()
+  });
+
+  formElements.preferredTime = PROJECT.template.formRow({
+    ns : '[cat_tag:namespace]',
+    text : catPortalNLSJSON.preferredTimeTxt,
+    type : 'timepicker',
+    id : 'preferredTime',
+    defaultTime: '7',
+    startTime: '5:00',
+    appendTo : form,
+    layout : PROJECT.template.FORM_LAYOUT.FULLPAGE
+  });
+
+  var dealerContainer = $('<div id="[cat_tag:namespace]dealerContainer"></div>');
+  PROJECT.template.outPutHTML(dealerContainer, form);
+
+  PROJECT.template.getSectionTitle({
+    text : catPortalNLSJSON.confirmatonPreferencesLabelTxt,
+    appendTo : form
+  });
+
+  PROJECT.template.outPutHTML($('<p>'+catPortalNLSJSON.confirmatonPreferencesHeaderTxt+'</p>'), form);
+
+  formElements.contactName = PROJECT.template.formRow({
+    ns : '[cat_tag:namespace]',
+    text : catPortalNLSJSON.contactNameTxt,
+    value : catCustomerPortalUserAttributes.displayName,
+    id : 'contactName',
+    appendTo : form,
+    isRequiredMarkup : true,
+    rules : {
+      required : true,
+      maxlength : 100
+    },
+    messages : {
+      required : catPortalNLSJSON.contactNameValidationTxt
+    }
+  });
+
+  var phonesContainer = $('<div id="[cat_tag:namespace]phonesContainer"></div>');
+  PROJECT.template.outPutHTML(phonesContainer, form);
+
+  PROJECT.phone.draw(phonesContainer, {}, {
+    ns : '[cat_tag:namespace]',
+    id : 'contactPhone',
+    selectedPhonePrefix : 'US',
+    phoneValue : catCustomerPortalUserAttributes.telephoneNumber,
+    isRequiredMarkup : true,
+    rules : {
+      required : true
+    },
+    messages : {
+      required : catPortalNLSJSON.contactPhoneValidationTxt
+    }
+  }, form);
+
+  var addPhoneLink = $('<a href="javascript:void(0);">add another phone number</a>');
+  var removePhoneLink = $('<a href="javascript:void(0);" style="display:none;">remove</a>');
+
+
+  addPhoneLink.click(function(){
+    formElements.altContactPhone = PROJECT.phone.draw(phonesContainer, {}, {
+      ns : '[cat_tag:namespace]',
+      id : 'altContactPhone',
+      selectedPhonePrefix : 'US',
+      rules : {
+        required : true
+      },
+      messages : {
+        required : catPortalNLSJSON.contactPhoneValidationTxt
+      }
+    }, form);
+    removePhoneLink.show();
+    addPhoneLink.hide();
+  });
+
+  removePhoneLink.click(function(){
+    addPhoneLink.show();
+    if(formElements.altContactPhone){
+      formElements.altContactPhone.phonePrefix.parentsUntil(phonesContainer,'.row').remove();
+      formElements.altContactPhone.phone.parentsUntil(phonesContainer,'.row').remove();
+      formElements.altContactPhone = undefined;
+    }
+    removePhoneLink.hide();
+  });
+
+  PROJECT.template.outPutHTML(addPhoneLink, form);
+  PROJECT.template.outPutHTML(removePhoneLink, form);
+
+  formElements.method = PROJECT.template.formRow({
+    ns : '[cat_tag:namespace]',
+    text : catPortalNLSJSON.methodTxt,
+    id : 'method',
+    appendTo : form,
+    isRequiredMarkup : true,
+    type : 'select',
+    placeholder: catPortalNLSJSON.selectTxt,
+    select : [ {
+      value : 'Call',
+      text : catPortalNLSJSON.callTxt
+    }, {
+      value : 'Text',
+      text : catPortalNLSJSON.textTxt
+    }, {
+      value : 'Email',
+      text : catPortalNLSJSON.emailTxt
+    }  ],
+    rules : {
+      required : true,
+    },
+    messages:{
+      required:catPortalNLSJSON.contactMethodValidationTxt}
+    });
+
+    var emailsContainer = $('<div></div>')
+    PROJECT.template.outPutHTML(emailsContainer, form);
+
+    formElements.email = PROJECT.template.formRow({
+      ns : '[cat_tag:namespace]',
+      text : catPortalNLSJSON.emailTxt,
+      value : catCustomerPortalUserAttributes.mail,
+      id : 'email',
+      appendTo : emailsContainer,
+      rulesForm: form,
+      isRequiredMarkup : true,
+      rules : {
+        required : true,
+        email : true,
+        maxlength : 100
+      },
+      messages : {
+        required : catPortalNLSJSON.ContactCatValidEmailTxt
+      }
+    });
+
+    var addEmailLink = $('<a href="javascript:void(0)">'+catPortalNLSJSON.addAnotherEmailTxt+'</a>');
+    var removeEmailLink = $('<a href="javascript:void(0)" style="display:none;">remove</a>');
+    addEmailLink.click(function(){
+      formElements.altContactEmail = PROJECT.template.formRow({
+        ns : '[cat_tag:namespace]',
+        text : catPortalNLSJSON.emailTxt,
+        id : 'altContactEmail',
+        appendTo : emailsContainer,
+        rulesForm: form,
+        isRequiredMarkup : true,
+        rules : {
+          required : true,
+          email : true,
+          maxlength : 100
+        },
+        messages : {
+          required : catPortalNLSJSON.ContactCatValidEmailTxt
+        }
+      });
+      addEmailLink.hide();
+      removeEmailLink.show();
+    });
+
+    removeEmailLink.click(function(){
+      formElements.altContactEmail.parentsUntil(emailsContainer,'.row').remove();
+      formElements.altContactEmail = undefined;
+      addEmailLink.show();
+      removeEmailLink.hide();
+    });
+
+    PROJECT.template.outPutHTML(addEmailLink, form);
+    PROJECT.template.outPutHTML(removeEmailLink, form);
+
+    PROJECT.template.getSectionTitle({
+      text : catPortalNLSJSON.alertsTxt,
+      appendTo : form
+    });
+
+    PROJECT.template.outPutHTML($('<p>' + catPortalNLSJSON.sosAlertsSectionInformationTxt + '</p>'), form);
+    var alertsErrorLabel = $('<label class="cat-error-text" style="display: none;">Select one or more SOS result</label>');
+    PROJECT.template.outPutHTML(alertsErrorLabel, form);
+
+    var alertsDatatableContainer = $('<div class="margin-bottom-15"></div>')
+    PROJECT.template.outPutHTML(alertsDatatableContainer, form);
+
+    PROJECT.template.outPutHTML($('<div class="clear"></div>'), form);
+
+    formElements.serviceLocation = PROJECT.template.formRow({
+      ns : '[cat_tag:namespace]',
+      text : catPortalNLSJSON.serviceLocationTxt,
+      id : 'serviceLocation',
+      appendTo : form,
+      isRequiredMarkup : true,
+      rules : {
+        required : true
+      },
+      messages : {
+        required : catPortalNLSJSON.textAreaValidationTxt
+      }
+    });
+
+    PROJECT.template.outPutHTML($('<p>'+catPortalNLSJSON.serviceLocationBodyTxt+'</p>'), form);
+
+    formElements.locationDescription = PROJECT.template.formRow({
+      ns : '[cat_tag:namespace]',
+      id : 'locationDescription',
+      type: 'textarea',
+      appendTo : form,
+      rows: 20
+    });
+
+    var ratingArr = [{
+      key:'1',
+      emergency:'RED',
+      rating:catPortalNLSJSON.actionRequiredTxt,
+      colorClass:'status-high',
+      icon:PROJECT.template.TABLE_ICONS_TYPES.ALERT
+    },{
+      key:'2',
+      emergency:'YELLOW',
+      rating:catPortalNLSJSON.monitorTxt_fleetsos,
+      colorClass:'status-medium',
+      icon:PROJECT.template.TABLE_ICONS_TYPES.MONITOR
+    },{
+      key:'3',
+      emergency:'GRAY',
+      rating:catPortalNLSJSON.fyiTxt,
+      colorClass:'status-info',
+      icon:PROJECT.template.TABLE_ICONS_TYPES.INFO
+    },{
+      key:'4',
+      emergency:'GREEN',
+      rating:catPortalNLSJSON.normalTxt,
+      colorClass:'status-normal',
+      icon:PROJECT.template.TABLE_ICONS_TYPES.CHECK
+    }];
+
+    function getRatingObj(key){
+      return ratingArr.find(function(item){
+        return (item.key == key);
+      });
+    }
+
+    var selectAllCheckboxDiv = $('<div>');
+    PROJECT.template.formRow({
+      ns : '[cat_tag:namespace]',
+      id : 'selectAll',
+      type : 'checkbox',
+      appendTo : selectAllCheckboxDiv
+    });
+
+    var eventTable = $('<div id="[cat_tag:namespace]alertsDatatable">'+
+    '<div id="[cat_tag:namespace]alertsDatatableTemplate">'+
+    '<table id="[cat_tag:namespace]ServiceTableTemplate" class="dataTable">'+
+    '<thead>'+
+    '<tr>'+
+    '<th class="all">' + selectAllCheckboxDiv.html() + '</input></th>'+
+    '<th class="all">'+catPortalNLSJSON.dateTxt+'</th>'+
+    '<th class="all"></th>'+
+    '<th class="all">'+catPortalNLSJSON.healthRatingTxt+'</th>'+
+    '<th class="all">'+catPortalNLSJSON.labNumberTxt+'</th>'+
+    '<th class="none">'+catPortalNLSJSON.componentTxt+'</th>'+
+    '<th class="none">'+catPortalNLSJSON.descriptionTxt+'</th>'+
+    '</tr>'+
+    '</thead>'+
+    '<tbody></tbody>'+
+    '</table>'+
+    '</div>'+
+    '</div>');
+    PROJECT.template.outPutHTML(eventTable,alertsDatatableContainer);
+
+    var alerts = PROJECT.utility.getUrlParameter('alerts');
+    alerts.sort(function(a1, a2){
+      var getRanking  = function(a){
+        var ranking = a.selected?0:10;
+        ranking += a.healthRating;
+        return ranking;
+      }
+
+      var r1 = getRanking(a1);
+      var r2 = getRanking(a2)
+      if(r1==r2){
+        return a2.date.timestamp - a1.date.timestamp;
+      }
+      return r1 - r2;
+    });
+
+    var alertsTable = PROJECT.dataTable.draw($('#[cat_tag:namespace]ServiceTableTemplate'), '[cat_tag:namespace]', {
+      data : alerts,
+      catNotSearch : true,
+      catNotExport : true,
+      catIsBottomBorder : true,
+      ordering: false,
+      columns : [
+        {
+          data: 'selected',
+          render:function(selected, type, row, meta){
+            var checkDiv = $('<div>');
+            PROJECT.template.formRow({
+              ns : '[cat_tag:namespace]',
+              id : 'checkbox'+ row,
+              type : 'checkbox',
+              value: selected,
+              appendTo : checkDiv
+            });
+            console.log(meta);
+            return checkDiv.html();
+          },
+          createdCell: function (td, cellData, rowData, row, col) {
+            $(td).closest('tr').addClass('cat-clickable-row');
+          },
+          orderable: false,
+        }, {
+          data: 'date.str',
+          orderable: false
+        }, {
+          data: 'healthRating',
+          render : function(val, type, row) {
+            return PROJECT.template.getRatingDiv(val);
+          },
+          orderable: false
+        }, {
+          data:'healthRating',
+          render: function(val){
+            return val && getRatingObj(val).rating || '';
+          },
+          orderable: false
+        }, {
+          data:'labNo',
+          orderable: false
+        },
+        {
+          data:'component',
+          orderable: false
+        },
+        {
+          data:'description',
+          orderable: false
+        }
+      ],
+      language: {
+        emptyTable:catPortalNLSJSON.noSOSTxt,
+        zeroRecords: catPortalNLSJSON.noSOSTxt
+      },
+    });
+
+    if(alerts.length == 1){
+      $('#[cat_tag:namespace]selectAll').prop("checked", true);
+    }
+
+    $('#[cat_tag:namespace]selectAll').click(function() {
+      $('#[cat_tag:namespace]alertsDatatable tbody input:checkbox').prop("checked", this.checked);
+      $('#[cat_tag:namespace]alertsDatatable tbody input:checkbox').change();
+    });
+
+    $('#[cat_tag:namespace]alertsDatatable tbody input:checkbox').change(function(){
+      if($('#[cat_tag:namespace]alertsDatatable tbody').find('input:checked').length == 0){
+        $(this).parentsUntil('tbody','tr').removeClass('selected');
+        alertsErrorLabel.show();
+      } else {
+        alertsErrorLabel.hide();
+        $(this).parentsUntil('tbody','tr').addClass('selected');
+      }
+    })
+
+    formElements.buttons = PROJECT.template.formRow({
+      ns : '[cat_tag:namespace]',
+      layout : 'centered',
+      list : [ {
+        text : catPortalNLSJSON.cancelButtonTxt,
+        type : 'button',
+        role : 'secondary'
+      }, {
+        text : catPortalNLSJSON.submitButtonTxt,
+        type : 'submit',
+        role : 'primary'
+      } ],
+      appendTo : form,
+    });
+
+    //Only blocks one
+    formElements.buttons[0].one('click', function(e) {
+      console.log('Blocking');
+      e.stopImmediatePropagation();
+      return false;
+    });
+
+    PROJECT.validation.validate(form, function(form){
+      if($('#[cat_tag:namespace]alertsDatatable tbody').find('input:checked').length == 0){
+        alertsErrorLabel.show();
+        return false;
+      }
+      submitForm();
+    });
+
+    var params = {};
+    params["context"] = encodeURIComponent('?format=json&aem_cd=CAT&serial_number=7PZ00407');
+    params["method"] = 'GET';
+    [cat_tag:namespace]CallServicePortletResourceURL('custPortalServiceRequestDealerSelectionGet', null,
+    function(dealers){
+      dealers = JSON.parse(dealers);
+      console.log(dealers);
+      if(dealers.length==0)
+      return;
+      if(dealers.length==1){
+        PROJECT.template.outPutHTML($('<div class="margin-bottom-10"><label>'+catPortalNLSJSON.dealerTxt+': '+dealers[0].text+'</label></div>'), dealerContainer);
+        return;
+      }
+
+      formElements.dealer = PROJECT.template.formRow({
+        ns : '[cat_tag:namespace]',
+        text : catPortalNLSJSON.dealerTxt,
+        id : 'dealer',
+        appendTo : dealerContainer,
+        type : 'select',
+        select : dealers,
+        selected : dealers[0].dealerCode
+      });
+    },  function(statusCode){
+      console.log(statusCode);
+    }, params);
+
+    function submitForm(){
+      var sosResultInfos = [];
+      var selectedRows = alertsTable.rows('.selected').data();
+      for (var i = 0; i < selectedRows.length; i++) {
+        sosResultInfos.push({
+          component: selectedRows[i].component,
+          sosLab: selectedRows[i].labNo,
+          description: selectedRows[i].description
+        });
+    }
+
+      var sosServiceRequest =  {
+        serviceLocation: $('#[cat_tag:namespace]serviceLocation').val(),
+        preferredTime: $('#[cat_tag:namespace]preferredTime').val(),
+        preferredDate:$('#[cat_tag:namespace]preferredDate').val(),
+        sosResultInfos: sosResultInfos,
+        commonAssetInfo: {
+          serialNumber: serialNumber,
+          serviceMeter: serviceMeter,
+          dealerCode: $('#[cat_tag:namespace]dealer').val(),
+          assetID: assetId,
+          model: model,
+          make: make,
+          productType: product
+        }
+      }
+
+      console.log(sosServiceRequest);
+
+      var params = {};
+      params["context"] = '?format=json';
+      params["method"] = 'POST';
+      params["form_param_list"] = 'sosServiceRequest=' + JSON.stringify(sosServiceRequest);
+      [cat_tag:namespace]CallServicePortletResourceURL('custPortalSOSServiceRequestCreate', null,
+      function(response){
+        console.log(response);
+      }, function(statusCode){
+        console.log(statusCode);
+      }, params);
+    }
+
+  });
+</script>
