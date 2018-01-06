@@ -8,13 +8,10 @@ var messageService = require('../services/message-service');
 var baseUploadUrl = CONF.videoSourceUrl;
 
 router.get('/messages', function(req, res, next) {
-	messageService.getMessageWithoutParts(function(err,body){
-		if(!err){
-			var test = [];
-			test.push(body[0]);
-			res.send(test);
-			res.status(200).end();
-		}
+	messageService.getMessages(function(err, body){
+		console.log(body);
+		res.send(body);
+		res.status(200).end();
 	});
 });
 
