@@ -356,7 +356,7 @@
     params["method"] = 'GET';
     [cat_tag:namespace]CallServicePortletResourceURL('custPortalServiceRequestAlertsGet', null,
     function(resultStr){
-      var result = JSON.parse(resultStr);parent
+      var result = JSON.parse(resultStr);
       var alerts = result.sosScheduleService;
       alerts.sort(function(a1, a2){
         var getRanking  = function(a){
@@ -414,6 +414,8 @@
       })
       loadAlertsDeferred.resolve();
     },  function(statusCode){
+      PROJECT.theme.skins.hideSkinPortletLoading('[cat_tag:namespace]');
+      form.show();
       PROJECT.theme.skins.messages.setDivGenericError('[cat_tag:namespace]message');
       document.getElementById('[cat_tag:namespace]top').click();
     }, params);
@@ -433,7 +435,7 @@
       appendTo : form,
     });
 
-    formElements.buttons[1].on('click', function(e){
+    formElements.buttons[1].on('click.temp', function(e){
       e.stopImmediatePropagation();
       return false;
     });
@@ -442,7 +444,7 @@
       PROJECT.theme.skins.hideSkinPortletLoading('[cat_tag:namespace]');
       form.show();
 
-      formElements.buttons[1].off('click').on('click', function(e) {
+      formElements.buttons[1].off('click.temp').on('click', function(e) {
         if(!isCustomer){
           PROJECT.theme.skins.messages.setDivError('[cat_tag:namespace]message', catPortalNLSJSON.vaildCustomerUserErrorMessageTxt);
           document.getElementById('[cat_tag:namespace]top').click();
@@ -450,9 +452,11 @@
           return false;
         }
 
-        PROJECT.validation.validate(form, function(form){
-          submitForm();
-        });
+        if(isCustomer){
+          PROJECT.validation.validate(form, function(form){
+            submitForm();
+          });
+        }
         return true;
       });
     });
@@ -486,6 +490,8 @@
         selected : dealers[0].dealerCode
       });
     },  function(statusCode){
+      PROJECT.theme.skins.hideSkinPortletLoading('[cat_tag:namespace]');
+      form.show();
       PROJECT.theme.skins.messages.setDivGenericError('[cat_tag:namespace]message');
       document.getElementById('[cat_tag:namespace]top').click();
     }, params);
@@ -525,8 +531,11 @@
       var params = {};
       params["context"] = '?format=json';
       params["method"] = 'POST';
-      params["form_param_list"] = 'sosServiceRequest=' + JSON.stringify(sosServiceRequest) +'&aemCode=' + manufacturerCode
-      + '&serialNumber=' + serialNumber + '&dealerCode=' + dealerCode;
+      params["form_param_json"] = {sosServiceRequest: JSON.stringify(sosServiceRequest),
+        aemCode: manufacturerCode,
+        serialNumber: serialNumber,
+        dealerCode: dealerCode
+      }
       [cat_tag:namespace]CallServicePortletResourceURL('custPortalSOSServiceRequestPost', null,
       function(response){
         PROJECT.theme.skins.hideSkinPortletLoading('[cat_tag:namespace]');
@@ -539,4 +548,4 @@
     }
 
   })();
-</script>
+  </script>

@@ -1,0 +1,29 @@
+<html>
+<head>
+<script type="text/javascript">
+function getUrlParameter(param) {
+  var pageURL = window.location.search.substring(1), uRLVariables = pageURL
+      .split('&'), parameterName, i;
+  for (i = 0; i < uRLVariables.length; i++) {
+    parameterName = uRLVariables[i].split('=');
+  
+    if (parameterName[0] === param) {
+      var parameterValue = decodeURIComponent(parameterName[1]);
+      var sol;
+      try {
+        sol = eval(parameterValue)
+      } catch (e){
+        sol = parameterValue;
+      }
+      return parameterValue === undefined ? true : sol;
+    }
+  }
+}
+
+console.log('param', getUrlParameter('asset'));
+</script>
+</head>
+<body>
+
+</body>
+</html>

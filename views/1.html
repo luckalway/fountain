@@ -1,0 +1,329 @@
+<form id="[cat_tag:namespace]form"></form>
+<script type="text/javascript">
+$(function() {
+var serviceUrl = [cat_tag:namespace]ServicePortletResourceURL;
+
+
+
+var params = {};
+params["context"] = '?format=json';
+params["method"] = 'POST';
+params["form_param_list"] = null;
+[cat_tag:namespace]CallServicePortletResourceURL('custPortalSOSServiceRequestCreate', null,
+function(response){
+    console.log(response);
+}, function(statusCode){
+    console.log(statusCode);
+}, params);
+
+
+/***
+console.log(serviceUrl);
+
+$.ajax({
+	url : serviceUrl,
+	type: 'post',
+	data : 'form_param_list='+ encodeURIComponent('contact_info_json=' + JSON.stringify(json)),
+	success: function(data){
+		console.log(data);
+	},
+	error: function(error){
+		console.log('error',error);
+	}
+});
+
+***/
+
+	function getURLParameter(name) {
+		return decodeURIComponent((new RegExp('[?|&]' + name + '='
+				+ '([^&;]+?)(&|#|;|$)').exec(location.search) || [ null, '' ])[1]
+				.replace(/\+/g, '%20'))
+				|| null;
+	}
+
+function getDealerOptions() {
+	var dealers = {};
+	var dealerInfos = [cat_tag:namespace]CustomerIdObjectAttributes.allDealerCustomerAccountListString.split('|');
+	for (var i = 0; i < dealerInfos.length; i++) {
+		var dealerInfo = dealerInfos[i].split('_');
+		dealers[dealerInfo[0]] = dealerInfo[1];
+	}
+	var dealerOptions = [];
+	for (var key in dealers) {
+		dealerOptions.push({
+			value: key,
+			text: dealers[key]
+		});
+	}
+	return dealerOptions;
+}
+
+
+	var params = (new URL(location.href)).searchParams;
+
+	var formElements = {};
+	var form = $('#[cat_tag:namespace]form');
+
+	PROJECT.template.outPutHTML($('<p>'
+			+ catPortalNLSJSON.scheduleServiceHeader + '</p>'), form);
+
+	PROJECT.template.outPutHTML(
+			$('<p><div class="margin-bottom-10"><label>'
+					+ catPortalNLSJSON.snTxt + ': '
+					+ params.get('serialNumber') + '</label></div>'
+					+ '<div class="margin-bottom-10"><label>'
+					+ catPortalNLSJSON.assetIdTxt + ': '
+					+ params.get('assetId') + '</label></div>'
+					+ '<div class="margin-bottom-10"><label>'
+					+ catPortalNLSJSON.makeTxt + ': ' + params.get('make')
+					+ '</label></div>'
+					+ '<div class="margin-bottom-10"><label>'
+					+ catPortalNLSJSON.productTxt + ': '
+					+ params.get('product') + '</label></div>'
+					+ '<div class="margin-bottom-10"><label>'
+					+ catPortalNLSJSON.modelTxt + ': '
+					+ params.get('model') + '</label></div></p>'), form);
+
+	PROJECT.template.getSectionTitle({
+		text : catPortalNLSJSON.appointmentPreferencesLabelTxt,
+		appendTo : form
+	});
+
+	PROJECT.template.outPutHTML($('<p>'
+			+ catPortalNLSJSON.appointmentPreferencesHeaderTxt + '</p>'),
+			form);
+
+	formElements.preferredDate = PROJECT.template.formRow({
+		ns : '[cat_tag:namespace]',
+		text : catPortalNLSJSON.preferredDateTxt,
+		type : 'datepicker',
+		id : 'preferredDate',
+		value : new Date(),
+		appendTo : form,
+		startDate : new Date()
+	});
+
+	formElements.preferredTime = PROJECT.template.formRow({
+		ns : '[cat_tag:namespace]',
+		text : catPortalNLSJSON.preferredTimeTxt,
+		type : 'timepicker',
+		id : 'preferredTime',
+		defaultTime : '7',
+		startTime : '5:00',
+		appendTo : form,
+		layout : PROJECT.template.FORM_LAYOUT.FULLPAGE
+	});
+
+	formElements.dealer = PROJECT.template.formRow({
+		ns : '[cat_tag:namespace]',
+		text : catPortalNLSJSON.dealerTxt,
+		id : 'dealer',
+		appendTo : form,
+		type : 'select',
+		select : getDealerOptions(),
+		selected : 'B'
+	});
+
+	PROJECT.template.getSectionTitle({
+		text : catPortalNLSJSON.confirmatonPreferencesLabelTxt,
+		appendTo : form
+	});
+
+	PROJECT.template.outPutHTML($('<p>'
+			+ catPortalNLSJSON.confirmatonPreferencesHeaderTxt + '</p>'),
+			form);
+
+	formElements.contactName = PROJECT.template.formRow({
+		ns : '[cat_tag:namespace]',
+		text : catPortalNLSJSON.contactNameTxt,
+		value : catCustomerPortalUserAttributes.displayName,
+		id : 'contactName',
+		appendTo : form,
+		isRequiredMarkup : true,
+		rules : {
+			required : true,
+			maxlength : 100
+		},
+		messages : {
+			required : catPortalNLSJSON.firstNameValidationTxt
+		}
+	});
+
+	var phonesContainer = $('<div id="[cat_tag:namespace]phonesContainer"></div>');
+	PROJECT.template.outPutHTML(phonesContainer, form);
+
+	PROJECT.phone.draw(phonesContainer, {}, {
+		ns : '[cat_tag:namespace]',
+		id : 'contactPhone',
+		selectedPhonePrefix : 'US',
+		phoneValue : catCustomerPortalUserAttributes.telephoneNumber,
+	}, form);
+
+	var addPhoneLink = $('<a href="javascript:void(0);">add another phone number</a>');
+	var removePhoneLink = $('<a href="javascript:void(0);" style="display:none;">remove</a>');
+
+	addPhoneLink.click(function() {
+		formElements.additionContactPhone = PROJECT.phone.draw(
+				phonesContainer, {}, {
+					ns : '[cat_tag:namespace]',
+					id : 'additionContactPhone',
+					selectedPhonePrefix : 'US'
+				}, form);
+		removePhoneLink.show();
+		addPhoneLink.hide();
+	});
+
+	removePhoneLink.click(function() {
+		addPhoneLink.show();
+		if (formElements.additionContactPhone) {
+			formElements.additionContactPhone.phonePrefix.parentsUntil(
+					phonesContainer, '.row').remove();
+			formElements.additionContactPhone.phone.parentsUntil(
+					phonesContainer, '.row').remove();
+			formElements.additionContactPhone = undefined;
+		}
+		removePhoneLink.hide();
+	});
+
+	PROJECT.template.outPutHTML(addPhoneLink, form);
+	PROJECT.template.outPutHTML(removePhoneLink, form);
+
+	formElements.method = PROJECT.template.formRow({
+		ns : '[cat_tag:namespace]',
+		text : catPortalNLSJSON.methodTxt,
+		id : 'method',
+		appendTo : form,
+		type : 'select',
+		select : [ {
+			value : catPortalNLSJSON.selectTxt,
+			text : ''
+		}, {
+			value : 'B',
+			text : 'Text B'
+		} ],
+		selected : 'B',
+
+		rules : {
+			required : true,
+		}
+	});
+
+	var emailsContainer = $('<div></div>')
+	PROJECT.template.outPutHTML(emailsContainer, form);
+
+	formElements.email = PROJECT.template.formRow({
+		ns : '[cat_tag:namespace]',
+		text : catPortalNLSJSON.emailTxt,
+		value : catCustomerPortalUserAttributes.mail,
+		id : 'email',
+		appendTo : emailsContainer,
+		rulesForm : form,
+		isRequiredMarkup : true,
+		rules : {
+			required : true,
+			email : true,
+			maxlength : 100
+		},
+		messages : {
+			required : catPortalNLSJSON.lastNameValidationTxt
+		}
+	});
+
+	var addEmailLink = $('<a href="javascript:void(0)">'
+			+ catPortalNLSJSON.addAnotherEmailTxt + '</a>');
+	var removeEmailLink = $('<a href="javascript:void(0)" style="display:none;">remove</a>');
+	addEmailLink.click(function() {
+		formElements.additionEmail = PROJECT.template.formRow({
+			ns : '[cat_tag:namespace]',
+			text : catPortalNLSJSON.emailTxt,
+			id : 'email',
+			appendTo : emailsContainer,
+			rulesForm : form,
+			isRequiredMarkup : true,
+			rules : {
+				required : true,
+				maxlength : 100
+			},
+			messages : {
+				required : catPortalNLSJSON.lastNameValidationTxt
+			}
+		});
+		addEmailLink.hide();
+		removeEmailLink.show();
+	});
+
+	removeEmailLink.click(function() {
+		formElements.additionEmail.parentsUntil(emailsContainer, '.row')
+				.remove();
+		formElements.additionEmail = undefined;
+		addEmailLink.show();
+		removeEmailLink.hide();
+	});
+
+	PROJECT.template.outPutHTML(addEmailLink, form);
+	PROJECT.template.outPutHTML(removeEmailLink, form);
+
+	PROJECT.template.getSectionTitle({
+		text : 'SOS Results',
+		appendTo : form
+	});
+
+	PROJECT.template
+			.outPutHTML(
+					$('<p>The following SOS results require immediate action. Select those you would like the dealer to address.</p>'),
+					form);
+
+	formElements.serviceLocation = PROJECT.template.formRow({
+		ns : '[cat_tag:namespace]',
+		text : catPortalNLSJSON.serviceLocationTxt,
+		id : 'serviceLocation',
+		appendTo : form,
+		isRequiredMarkup : true,
+		rules : {
+			required : true,
+			maxlength : 100
+		},
+		messages : {
+			required : catPortalNLSJSON.firstNameValidationTxt
+		}
+	});
+
+	PROJECT.template.outPutHTML($('<p>'
+			+ catPortalNLSJSON.serviceLocationBodyTxt + '</p>'), form);
+
+	formElements.locationDescription = PROJECT.template.formRow({
+		ns : '[cat_tag:namespace]',
+		id : 'locationDescription',
+		type : 'textarea',
+		appendTo : form,
+		rows : 20
+	});
+
+	formElements.buttons = PROJECT.template.formRow({
+		ns : '[cat_tag:namespace]',
+		layout : 'centered',
+		list : [ {
+			text : catPortalNLSJSON.cancelButtonTxt,
+			type : 'button',
+			role : 'secondary'
+		}, {
+			text : catPortalNLSJSON.submitButtonTxt,
+			type : 'submit',
+			role : 'primary'
+		} ],
+		appendTo : form,
+	});
+
+	//Only blocks one
+	formElements.buttons[0].one('click', function(e) {
+		console.log('Blocking');
+		e.stopImmediatePropagation();
+		return false;
+	});
+
+	PROJECT.validation.validate(form, function(form) {
+		console.log('validation');
+	});
+
+});
+</script>

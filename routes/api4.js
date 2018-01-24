@@ -9,8 +9,17 @@ var baseUploadUrl = CONF.videoSourceUrl;
 
 router.get('/messages', function(req, res, next) {
 	messageService.getMessages(function(err, body){
-		console.log(body);
 		res.send(body);
+		res.status(200).end();
+	});
+});
+
+router.get('/messages/:id', function(req, res, next) {
+	messageService.getMessage(req.params.id, function(err, message) {
+		if(err){
+			return next(err);
+		}
+		res.send(message);
 		res.status(200).end();
 	});
 });
