@@ -33,10 +33,37 @@ function isInvalidDoc(doc, dataType){
   }
 }
 
+router.post('/:dataTypes', function(req, res, next) {
+  var dataType = getDataTypeName(req.params.dataTypes);
+  commonService.createDoc(dataType, req.body,function(err, body){
+    if(err){
+      return next(err);
+    }
+    res.send(body);
+    res.status(200).end();
+  })
+});
+
+router.patch('/:dataTypes/:docId', function(req, res, next) {
+  var dataType = getDataTypeName(req.params.dataTypes);
+  commonService.patchUpdateDoc(dataType, req.params.docId, req.body, function(err, body){
+    if(err){
+      return next(err);
+    }
+    console.log(body);
+    res.status(200).end();
+  });
+});
+
+
 router.get('/:dataTypes', function(req, res, next) {
   var dataTypes = req.params.dataTypes;
   var view = req.params.view || 'default';
   commonService.getDocs(dataTypes, view, {}, function(err, body){
+    if(err){
+      return next(err);
+    }
+
     res.send(body);
     res.status(200).end();
   });
@@ -45,7 +72,7 @@ router.get('/:dataTypes', function(req, res, next) {
 router.get('/:dataType/:docId', function(req, res, next) {
   commonService.getDoc(req.params.docId, function(err, body){
     if(err){
-      return;
+      return next(err);
     }
 
     var invalidDoc = isInvalidDoc(body, req.params.dataType);
@@ -62,15 +89,25 @@ router.get('/:dataType/:docId', function(req, res, next) {
 router.get('/:dataType/:docId/:subDataType', function(req, res, next) {
   var dataType = getDesignName(req.params.dataType, req.params.subDataType);
   var view = req.params.view || 'default';
-  commonService.getDocs(dataType, view, {}, function(err, body){
+  commonService.getDocs(dataType, view, {key: req.params.docId}, function(err, body){
+    if(err){
+      return next(err);
+    }
+
     res.send(body);
     res.status(200).end();
   });
 });
 
-router.get('/:dataType/:docId/:subDataType/:docId', function(req, res, next) {
-  var dataType = getDataTypeName(req.params.dataType, req.params.subDataType);
-  commonService.getDoc(req.params.docId, function(err, body){
+router.get('/:dataType/:docId/:subDataType/:subDocId', function(req, res, next) {
+  commonService.getDoc(req.params.subDocId, function(err, body){
+    if(err){
+      return next(err);
+    }
+    var fieldName = getDataTypeName(req.params.dataType)+'Id';
+    if(body[fieldName] != req.params.docId){
+      return res.status(404).end();
+    }
     res.send(body);
     res.status(200).end();
   });
