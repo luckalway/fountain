@@ -35,7 +35,7 @@ function isInvalidDoc(doc, dataType){
 
 router.post('/:dataTypes', function(req, res, next) {
   var dataType = getDataTypeName(req.params.dataTypes);
-  commonService.createDoc(dataType, req.body,function(err, body){
+  commonService.createDoc(dataType, req.body, function(err, body){
     if(err){
       return next(err);
     }
@@ -55,11 +55,11 @@ router.patch('/:dataTypes/:docId', function(req, res, next) {
   });
 });
 
-
 router.get('/:dataTypes', function(req, res, next) {
-  var dataTypes = req.params.dataTypes;
+  var designName = req.params.dataTypes;
+  var dataType = getDataTypeName(req.params.dataTypes);
   var view = req.params.view || 'default';
-  commonService.getDocs(dataTypes, view, {}, function(err, body){
+  commonService.getDocs(dataType, designName, view, {}, function(err, body){
     if(err){
       return next(err);
     }

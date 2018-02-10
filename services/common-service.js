@@ -1,3 +1,7 @@
+function getCouchdb(dataType){
+	return dataType == 'user' ? couchdb_user: couchdb;
+}
+
 exports.patchUpdateDoc = function(dataType, id, patchDoc, callback){
 	couchdb.get(id, {
 		revs_info : true
@@ -10,13 +14,13 @@ exports.patchUpdateDoc = function(dataType, id, patchDoc, callback){
 			body[key] = patchDoc[key];
 		}
 		delete body['_revs_info'];
-		couchdb.update(body, body._id, callback);
+		getCouchdb(dataType).update(body, body._id, callback);
 	});
-} 
+}
 
 
 exports.getDoc = function(id, callback){
-	couchdb.get(id, {
+	getCouchdb(dataType).get(id, {
 		revs_info : true
 	}, callback);
 }
@@ -28,23 +32,21 @@ exports.createDoc = function(dataType, doc, callback){
 	if(!idGenerator[dataType]){
 		return callback({error: 'No idGenerator for ' + dataType});
 	}
-	doc.id = idGenerator[dataType].call();
-
-	couchdb.insert(doc, callback(null, id));
+	doc._id = idGenerator[dataType].call();
+	getCouchdb(dataType).insert(doc, callback(null, doc));
 }
 
-exports.getDocs = function(designname, viewname, params, callback){
-	couchdb.view(designname, viewname, params || {}, function(err, body) {
+exports.getDocs = function(dataType, designname, viewname, params, callback){
+	getCouchdb(dataType).view(designname, viewname, params || {}, function(err, body) {
 		if(err){
-			//console.log(err);
-			callback(err);
-			return;
+			return	callback(err);
 		}
 
 		var docs = [];
 		body.rows.forEach(function(doc) {
 			docs.push(doc.value);
 		});
+		console.log(docs);
 		callback(null, docs);
 	});
 }
@@ -61,5 +63,8 @@ var generateId = function(length) {
 var idGenerator = {
 	message:function(){
 		return generateId(8);
+	},
+	user:function(){
+		return generateId(6);
 	}
 }

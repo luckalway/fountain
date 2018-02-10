@@ -12,6 +12,7 @@ global.app = express();
 var env = require('./env-'+app.get('env'));
 global.nano = require('nano')(env.couchdb.url);
 global.couchdb = nano.db.use(env.couchdb.db);
+global.couchdb_user = nano.db.use('spring_user');
 global.CONF = env.conf;
 global.accounts = env.accounts;
 var LogFactory = require('log');
@@ -91,6 +92,7 @@ app.use(function(req, res, next) {
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
+  console.error(err)
   if(err.statusCode == 404){
       return res.status(404).end();
   }
