@@ -50,7 +50,6 @@ router.patch('/:dataTypes/:docId', function(req, res, next) {
     if(err){
       return next(err);
     }
-    console.log(body);
     res.status(200).end();
   });
 });
@@ -58,8 +57,13 @@ router.patch('/:dataTypes/:docId', function(req, res, next) {
 router.get('/:dataTypes', function(req, res, next) {
   var designName = req.params.dataTypes;
   var dataType = getDataTypeName(req.params.dataTypes);
+  var descending = req.query.descending;
+  var params = {};
+  if(descending){
+    params.descending = descending;
+  }
   var view = req.params.view || 'default';
-  commonService.getDocs(dataType, designName, view, {}, function(err, body){
+  commonService.getDocs(dataType, designName, view, params, function(err, body){
     if(err){
       return next(err);
     }
@@ -70,7 +74,7 @@ router.get('/:dataTypes', function(req, res, next) {
 });
 
 router.get('/:dataType/:docId', function(req, res, next) {
-  commonService.getDoc(req.params.docId, function(err, body){
+  commonService.getDoc(req.params.docId, req.params.dataType, function(err, body){
     if(err){
       return next(err);
     }

@@ -19,7 +19,7 @@ exports.patchUpdateDoc = function(dataType, id, patchDoc, callback){
 }
 
 
-exports.getDoc = function(id, callback){
+exports.getDoc = function(id, dataType, callback){
 	getCouchdb(dataType).get(id, {
 		revs_info : true
 	}, callback);
@@ -46,7 +46,6 @@ exports.getDocs = function(dataType, designname, viewname, params, callback){
 		body.rows.forEach(function(doc) {
 			docs.push(doc.value);
 		});
-		console.log(docs);
 		callback(null, docs);
 	});
 }
