@@ -7,8 +7,6 @@ var bodyParser = require('body-parser');
 var ejs = require('ejs');
 var session = require('express-session');
 
-//test git
-
 global.ROOT_PATH = __dirname;
 global.app = express();
 var env = require('./env-'+app.get('env'));
