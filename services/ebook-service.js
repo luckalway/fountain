@@ -18,7 +18,7 @@ exports.createDoc = function(dataType, doc, callback){
 	}
 	doc._id = idGenerator[dataType].call();
 	ebookdb.insert(doc, callback(null, doc));
-}
+};
 
 exports.getDocs = function(designname, viewname, params, callback){
 	ebookdb.view(designname, viewname, params || {}, function(err, body) {
@@ -32,7 +32,7 @@ exports.getDocs = function(designname, viewname, params, callback){
 		});
 		callback(null, docs);
 	});
-}
+};
 
 var ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 var generateId = function(length) {

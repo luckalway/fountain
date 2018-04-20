@@ -26,7 +26,7 @@ global.couchdb.update = function(obj, key, callback) {
         if(!error) obj._rev = existing._rev;
         db.insert(obj, key, callback);
     });
-}
+};
 
 var index = require('./routes/index');
 var admin = require('./routes/admin');
