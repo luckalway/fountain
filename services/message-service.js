@@ -8,7 +8,7 @@ var generateId = function(length) {
     rtn += ALPHABET.charAt(Math.floor(Math.random() * ALPHABET.length));
   }
   return rtn;
-}
+};
 
 exports.getMessageWithoutParts = function(callback){
   couchdb.view("messages", "by_created_date", {descending:true}, function(err, body) {
@@ -23,7 +23,7 @@ exports.getMessageWithoutParts = function(callback){
     });
     callback(null, docs);
   });
-}
+};
 
 exports.getMessages = function(callback){
   couchdb.view("messages", "by_created_date", {descending:true}, function(err, body) {
@@ -37,8 +37,8 @@ exports.getMessages = function(callback){
       doc.value.createdDate = moment(doc.value.createdDate).format('YYYY-MM-DD');
       docsMap[doc.value._id] = doc.value;
       messageIds.push(doc.value._id);
-      docsMap[doc.value._id]['countOfUploaded'] = 0;
-      docsMap[doc.value._id]['publishDates'] = [];
+      docsMap[doc.value._id].countOfUploaded = 0;
+      docsMap[doc.value._id].publishDates = [];
     });
 
     couchdb.view("message_parts", "by_message_id", {keys:messageIds}, function(err, body) {
@@ -48,20 +48,19 @@ exports.getMessages = function(callback){
       }
 
       body.rows.forEach(function(doc) {
-        docsMap[doc.value.messageId]['countOfUploaded']++;
-        docsMap[doc.value.messageId]['publishDates'].push(doc.value.publishDate);
+        docsMap[doc.value.messageId].countOfUploaded++;
+        docsMap[doc.value.messageId].publishDates.push(doc.value.publishDate);
       });
 
       var docs = [];
       for(var key in docsMap){
-        docsMap[key]['publishDates'] = docsMap[key]['publishDates'].sort();
+        docsMap[key].publishDates = docsMap[key].publishDates.sort();
         docs.push(docsMap[key]);
       }
       callback(null, docs);
     });
   });
-
-}
+};
 
 exports.getMessage = function (messageId, callback) {
   couchdb.get(messageId, {
@@ -88,7 +87,7 @@ exports.getMessage = function (messageId, callback) {
       callback(null, messageBody);
     });
   });
-}
+};
 
 // @Deprecated
 exports.getMessageVideos = function(resourceId , callback){
@@ -127,7 +126,7 @@ exports.getMessageVideos = function(resourceId , callback){
     });
   });
 
-}
+};
 
 exports.createMessage = function(message, callback){
   message.createdDate = Date.parse(new Date());
@@ -135,7 +134,7 @@ exports.createMessage = function(message, callback){
 
   var id = generateId(8);
   couchdb.insert(merge(message, {table:"message", _id:id}), callback(null, id));
-}
+};
 
 exports.createMessagePart = function(part, callback){
   couchdb.insert(merge(part, {
@@ -144,7 +143,7 @@ exports.createMessagePart = function(part, callback){
     createdDate: Date.parse(new Date()),
     modifiedDate: Date.parse(new Date())
   }), callback);
-}
+};
 
 exports.removeMessage = function(messageId, callback){
   if(/\w{8}_\d{1,2}/.test(messageId)){
@@ -172,8 +171,7 @@ exports.removeMessage = function(messageId, callback){
       });
     });
   } else {
-    var messageId = messageId.split("_")[0];
-    this.getMessage(messageId, function(err, body){
+    this.getMessage(messageId.split("_")[0], function(err, body){
       if(err){
         callback(err);
         return;
@@ -194,6 +192,4 @@ exports.removeMessage = function(messageId, callback){
       });
     });
   }
-
-
-}
+};

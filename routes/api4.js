@@ -5,8 +5,6 @@ var fs = require("fs");
 var moment = require('moment');
 var messageService = require('../services/message-service');
 
-var baseUploadUrl = CONF.videoSourceUrl;
-
 router.get('/messages', function(req, res, next) {
 	messageService.getMessages(function(err, body){
 		res.send(body);
@@ -40,10 +38,10 @@ router.get('/messages/:id/videos', function(req, res, next) {
 			var isBeforeOrSameCurrent = parseInt(partNo) >= parseInt(part.partNo);
 			if(isBeforeToday || isBeforeOrSameCurrent){
 				if(part.audio && part.audio.url){
-					part.audio.url = baseUploadUrl + part.audio.url;
+					part.audio.url = part.audio.url;
 				}
 				if(part.video && part.video.url){
-					part.video.url = baseUploadUrl + part.video.url;
+					part.video.url = part.video.url;
 				}
 				messageParts.push(part);
 			}
