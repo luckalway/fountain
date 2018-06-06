@@ -3,7 +3,7 @@ var express = require('express');
 var router = express.Router();
 var path = require('path');
 var fs = require("fs");
-var commonService = require('../../../services/common-service');;
+var commonService = require('../../../services/common-service');
 
 function getSingularNoun(pluralNoun){
   if(pluralNoun.endsWith('s')){
