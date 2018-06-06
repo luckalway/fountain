@@ -77,7 +77,7 @@ app.use('/api/v2', api2);
 app.use('/api/v3', api3);
 app.use('/api/v4', api4);
 app.use('/api-2/v1.0', api2_V1_0);
-app.use('/api/ebooks/v1.0/', api_ebooks1_0);
+app.use('/api/ebook/v1.0/', api_ebooks1_0);
 
 app.use('/', message);
 app.use('/signout', function(req, res, next) {
@@ -95,7 +95,7 @@ app.use(function(req, res, next) {
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
-  console.error(err)
+  console.error(err);
   if(err.statusCode == 404){
       return res.status(404).end();
   }

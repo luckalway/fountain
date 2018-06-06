@@ -13,7 +13,6 @@ router.get('/articles', function(req, res, next) {
   if(req.query.keys){
     params.keys = req.query.keys.split(',');
   }
-  console.log(params.keys)
 
   var view = req.params.view || 'default';
   ebookService.getDocs('articles', view, params, function(err, body){
@@ -21,6 +20,16 @@ router.get('/articles', function(req, res, next) {
       return next(err);
     }
 
+    res.send(body);
+    res.status(200).end();
+  });
+});
+
+router.post('/books', function(req, res){
+  ebookService.createDoc(req.body,function(err,body){
+    if(err){
+      return next(err);
+    }
     res.send(body);
     res.status(200).end();
   });
