@@ -25,6 +25,17 @@ router.get('/articles', function(req, res, next) {
   });
 });
 
+router.get('/mp-articles', function(req, res, next) {
+  ebookService.getMpArticles(req.query.category, function(err, body){
+    if(err){
+      return next(err);
+    }
+
+    res.send(body);
+    res.status(200).end();
+  });
+});
+
 router.post('/books', function(req, res){
   ebookService.createDoc(req.body,function(err,body){
     if(err){
@@ -40,7 +51,7 @@ router.get('/articles/:id', function(req, res, next) {
     if(err){
       return next(err);
     }
-
+ 
     res.send(body);
     res.status(200).end();
   });

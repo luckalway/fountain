@@ -13,17 +13,17 @@ exports.patchUpdateDoc = function(dataType, id, patchDoc, callback){
 		for(var key in patchDoc){
 			body[key] = patchDoc[key];
 		}
-		delete body['_revs_info'];
+		delete body._revs_info;
 		getCouchdb(dataType).update(body, body._id, callback);
 	});
-}
+};
 
 
 exports.getDoc = function(id, dataType, callback){
 	getCouchdb(dataType).get(id, {
 		revs_info : true
 	}, callback);
-}
+};
 
 exports.createDoc = function(dataType, doc, callback){
 	doc.createdDate = Date.parse(new Date());
@@ -34,7 +34,7 @@ exports.createDoc = function(dataType, doc, callback){
 	}
 	doc._id = idGenerator[dataType].call();
 	getCouchdb(dataType).insert(doc, callback(null, doc));
-}
+};
 
 exports.getDocs = function(dataType, designname, viewname, params, callback){
 	getCouchdb(dataType).view(designname, viewname, params || {}, function(err, body) {
@@ -48,7 +48,7 @@ exports.getDocs = function(dataType, designname, viewname, params, callback){
 		});
 		callback(null, docs);
 	});
-}
+};
 
 var ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 var generateId = function(length) {
@@ -57,7 +57,7 @@ var generateId = function(length) {
 		rtn += ALPHABET.charAt(Math.floor(Math.random() * ALPHABET.length));
 	}
 	return rtn;
-}
+};
 
 var idGenerator = {
 	message:function(){
@@ -66,4 +66,4 @@ var idGenerator = {
 	user:function(){
 		return generateId(6);
 	}
-}
+};

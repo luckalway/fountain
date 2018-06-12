@@ -1,7 +1,8 @@
-var env = require(ROOT_PATH + '/env-'+app.get('env'));
-var nano = require('nano')(env.couchdb.url);
-var couchdb = nano.db.use(env.couchdb.db);
-var ebookdb = nano.db.use('yuan-book');
+const env = require(ROOT_PATH + '/env-'+app.get('env'));
+const nano = require('nano')(env.couchdb.url);
+const couchdb = nano.db.use(env.couchdb.db);
+const ebookdb = nano.db.use('yuan-book');
+const mpArticledb = nano.db.use('yuan-mp-article');
 
 exports.getDoc = function(id, callback){
 	ebookdb.get(id, {
@@ -13,7 +14,7 @@ exports.createDoc = function(doc, callback){
 	doc.createdDate = Date.parse(new Date());
 	doc.modifiedDate = Date.parse(new Date());
 	ebookdb.insert(doc, callback);
-}; 
+};
 
 exports.getDocs = function(designname, viewname, params, callback){
 	ebookdb.view(designname, viewname, params || {}, function(err, body) {
@@ -22,6 +23,20 @@ exports.getDocs = function(designname, viewname, params, callback){
 		}
 
 		var docs = [];
+		body.rows.forEach(function(doc) {
+			docs.push(doc.value);
+		});
+		callback(null, docs);
+	});
+};
+
+exports.getMpArticles=function(category, callback){
+	mpArticledb.view('articles', 'default', {key:category}, function(err, body) {
+		if(err){
+			return	callback(err);
+		}
+
+		let docs = [];
 		body.rows.forEach(function(doc) {
 			docs.push(doc.value);
 		});
