@@ -12,7 +12,7 @@ exports.patchUpdateDoc = function(dataType, id, patchDoc, callback){
 		}
 		for(var key in patchDoc){
 			body[key] = patchDoc[key];
-		}
+		} 
 		delete body._revs_info;
 		getCouchdb(dataType).update(body, body._id, callback);
 	});

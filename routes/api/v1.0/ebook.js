@@ -3,6 +3,7 @@ var router = express.Router();
 var path = require('path');
 var fs = require("fs");
 var ebookService = require('../../../services/ebook-service');
+const articleService = require('../../../services/article-service');
 
 router.get('/articles', function(req, res, next) {
   var descending = req.query.descending;
@@ -46,12 +47,19 @@ router.post('/books', function(req, res){
   });
 });
 
+router.put('/books/:id', function(req, res){
+  articleService.moveArticles(req.params.id, req.body.articleTitles,function(body){
+    res.send(body);
+    res.status(200).end();
+  });
+});
+
 router.get('/articles/:id', function(req, res, next) {
   ebookService.getDoc(req.params.id, function(err, body){
     if(err){
       return next(err);
     }
- 
+
     res.send(body);
     res.status(200).end();
   });

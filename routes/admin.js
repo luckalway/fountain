@@ -1,4 +1,5 @@
-var express = require('express');
+
+const express = require('express');
 var upload = require('../my_node_modules/jquery-file-upload-middleware');
 var path = require('path');
 var fs = require("fs");
