@@ -37,8 +37,28 @@ router.get('/mp-articles', function(req, res, next) {
   });
 });
 
+router.get('/books', function(req, res, next){
+  ebookService.getDocs('books', 'default', {}, function(err, body){
+    if(err){
+      return next(err);
+    }
+    res.send(body);
+    res.status(200).end();
+  });
+});
+
 router.post('/books', function(req, res){
   ebookService.createDoc(req.body,function(err,body){
+    if(err){
+      return next(err);
+    }
+    res.send(body);
+    res.status(200).end();
+  });
+});
+
+router.get('/books/:id', function(req, res, next){
+  articleService.getDocs('articles', 'bookId', {}, function(err, body){
     if(err){
       return next(err);
     }
@@ -55,7 +75,7 @@ router.put('/books/:id', function(req, res){
 });
 
 router.get('/articles/:id', function(req, res, next) {
-  ebookService.getDoc(req.params.id, function(err, body){
+  articleService.getDoc(req.params.id, function(err, body){
     if(err){
       return next(err);
     }

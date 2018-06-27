@@ -6,8 +6,14 @@ const mpArticledb = nano.db.use('yuan-mp-article');
 
 exports.moveArticles = function(bookId, articleTitles, callback){
 	let simpleArticleMap = new Map();
+	var lastSimpleArticle;
 	for(let simpleArticle of articleTitles){
-		simpleArticleMap.set(simpleArticle.id, simpleArticle.title);
+		if(lastSimpleArticle){
+			lastSimpleArticle.next = simpleArticle.id;
+			simpleArticle.prev = lastSimpleArticle.id;
+		}
+		lastSimpleArticle = simpleArticle;
+		simpleArticleMap.set(simpleArticle.id, simpleArticle);
 	}
 
 	let addArticle = function(err, mpArticle){
@@ -16,14 +22,21 @@ exports.moveArticles = function(bookId, articleTitles, callback){
 		}
 		let article = mpArticle;
 		delete article._rev;
-		article.title = simpleArticleMap.get(mpArticle._id);
+		let simpleArticle = simpleArticleMap.get(mpArticle._id);
+		article.title = simpleArticle.title;
 		article.bookId = bookId;
+		if(simpleArticle.next){
+			article.next = simpleArticle.next;
+		}
+		if(simpleArticle.prev){
+			article.prev = simpleArticle.prev;
+		}
 		article.createdDate = Date.parse(new Date());
 		article.modifiedDate = Date.parse(new Date());
 		//log.info(article);
 		articledb.insert(article, function(err){
 			if(err){
-				log.error(err);	
+				log.error(err);
 			}
 		});
 	}
@@ -37,4 +50,24 @@ exports.moveArticles = function(bookId, articleTitles, callback){
 	callback({
 		status: 'success'
 	})
+};
+
+exports.getDoc = function(id, callback){
+	articledb.get(id, {
+		revs_info : true
+	}, callback);
+};
+
+exports.getDocs = function(designname, viewname, params, callback){
+	articledb.view(designname, viewname, params || {}, function(err, body) {
+		if(err){
+			return	callback(err);
+		}
+
+		var docs = [];
+		body.rows.forEach(function(doc) {
+			docs.push(doc.value);
+		});
+		callback(null, docs);
+	});
 };
