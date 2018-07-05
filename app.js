@@ -9,7 +9,7 @@ var session = require('express-session');
 
 global.ROOT_PATH = __dirname;
 global.app = express();
-var env = require('./env-'+app.get('env'));
+global.env = require('./env-'+app.get('env'));
 global.nano = require('nano')(env.couchdb.url);
 global.couchdb = nano.db.use(env.couchdb.db);
 global.ebookdb = nano.db.use('ebook');
@@ -96,6 +96,7 @@ app.use(function(req, res, next) {
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   console.error(err);
+  console.error(err.stack);
   if(err.statusCode == 404){
       return res.status(404).end();
   }

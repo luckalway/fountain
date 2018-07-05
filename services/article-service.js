@@ -1,5 +1,6 @@
-const env = require(ROOT_PATH + '/env-'+app.get('env'));
 const nano = require('nano')(env.couchdb.url);
+const commonService = require('./common-service');
+
 const couchdb = nano.db.use(env.couchdb.db);
 const articledb = nano.db.use('yuan-article');
 const mpArticledb = nano.db.use('yuan-mp-article');
@@ -52,22 +53,41 @@ exports.moveArticles = function(bookId, articleTitles, callback){
 	})
 };
 
-exports.getDoc = function(id, callback){
-	articledb.get(id, {
-		revs_info : true
-	}, callback);
+exports.rearrangeArticles = function(bookId, articleIds, callback){
+	let patchDocsMap = new Map();
+	let lastArticleId;
+	let orderNo = 1;
+	for(let articleId of articleIds){
+		var patchDoc = {orderNo: orderNo++};
+		if(lastArticleId && patchDocsMap.has(lastArticleId)){
+			patchDoc.prev = lastArticleId;
+			patchDocsMap.get(lastArticleId).next = articleId;
+		}
+		patchDocsMap.set(articleId, patchDoc);
+		lastArticleId = articleId;
+	}
+	for(let [key, value] of patchDocsMap){
+		commonService.patchUpdateDoc('article', key, value, function(error, body){
+			if(error){
+				return log.error(error);
+			}
+			log.info(body);
+		});
+	}
 };
 
-exports.getDocs = function(designname, viewname, params, callback){
-	articledb.view(designname, viewname, params || {}, function(err, body) {
-		if(err){
-			return	callback(err);
-		}
-
-		var docs = [];
-		body.rows.forEach(function(doc) {
-			docs.push(doc.value);
+exports.getArticlesByBookId = function(bookId){
+	const promise = new Promise(function(resolve, reject){
+		commonService.view('article', 'articles', 'bookId', {}, function(err, body){
+			if(err){
+				return reject(err);
+			}
+			resolve(body);
 		});
-		callback(null, docs);
 	});
+	return promise;
+};
+
+exports.getArticle = function(articleId){
+	return commonService.get('article', articleId);
 };

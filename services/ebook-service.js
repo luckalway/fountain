@@ -4,6 +4,8 @@ const couchdb = nano.db.use(env.couchdb.db);
 const ebookdb = nano.db.use('yuan-book');
 const mpArticledb = nano.db.use('yuan-mp-article');
 
+const commonService = require('./common-service');
+
 exports.getDoc = function(id, callback){
 	ebookdb.get(id, {
 		revs_info : true
@@ -42,4 +44,8 @@ exports.getMpArticles=function(category, callback){
 		});
 		callback(null, docs);
 	});
+};
+
+exports.getBook = function(id){
+	return commonService.get('book', id);
 };

@@ -41,7 +41,7 @@ router.post('/:dataTypes', function(req, res, next) {
     }
     res.send(body);
     res.status(200).end();
-  })
+  });
 });
 
 router.patch('/:dataTypes/:docId', function(req, res, next) {
@@ -63,7 +63,7 @@ router.get('/:dataTypes', function(req, res, next) {
     params.descending = descending;
   }
   var view = req.params.view || 'default';
-  commonService.getDocs(dataType, designName, view, params, function(err, body){
+  commonService.view(dataType, designName, view, params, function(err, body){
     if(err){
       return next(err);
     }

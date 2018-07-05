@@ -1,69 +1,69 @@
-function getCouchdb(dataType){
-	return dataType == 'user' ? couchdb_user: couchdb;
+const nano = require('nano')(env.couchdb.url);
+const maindb = nano.db.use(env.couchdb.db);
+const ebookdb = nano.db.use('yuan-book');
+const userdb = nano.db.use('spring_user');
+const articledb = nano.db.use('yuan-article');
+const mpArticledb = nano.db.use('yuan-mp-article');
+
+const databasesMap = new Map();
+databasesMap.set('user', userdb);
+databasesMap.set('book', ebookdb);
+databasesMap.set('article', articledb);
+databasesMap.set('mpArticle', mpArticledb);
+
+function getCouchdb(dataType) {
+  return databasesMap.get(dataType) || maindb;
 }
 
-exports.patchUpdateDoc = function(dataType, id, patchDoc, callback){
-	couchdb.get(id, {
-		revs_info : true
-	}, function(err, body) {
-		if(err){
-			callback(err);
-			return;
-		}
-		for(var key in patchDoc){
-			body[key] = patchDoc[key];
-		} 
-		delete body._revs_info;
-		getCouchdb(dataType).update(body, body._id, callback);
-	});
+exports.patchUpdateDoc = function(dataType, id, patchDoc, callback) {
+  let couchdb = getCouchdb(dataType);
+  couchdb.get(id, function(err, body) {
+    if (err) {
+      return callback(err);
+    }
+    for (var key in patchDoc) {
+      body[key] = patchDoc[key];
+    }
+    couchdb.insert(body, body._id, callback);
+  });
 };
 
 
-exports.getDoc = function(id, dataType, callback){
-	getCouchdb(dataType).get(id, {
-		revs_info : true
-	}, callback);
+exports.get = function(dataType, id, callback){
+  const promise = new Promise(function(resolve, reject){
+    getCouchdb(dataType).get(id, {
+      revs_info: true
+    }, function(err, body){
+      if(err){
+        reject(err);
+      }else{
+        resolve(body);
+      }
+      if(callback){
+          callback(err,body);
+      }
+    });
+  });
+  return promise;
 };
 
-exports.createDoc = function(dataType, doc, callback){
-	doc.createdDate = Date.parse(new Date());
-	doc.modifiedDate = Date.parse(new Date());
-	doc.dataType = dataType;
-	if(!idGenerator[dataType]){
-		return callback({error: 'No idGenerator for ' + dataType});
-	}
-	doc._id = idGenerator[dataType].call();
-	getCouchdb(dataType).insert(doc, callback(null, doc));
+exports.createDoc = function(dataType, doc, callback) {
+  doc.createdDate = Date.parse(new Date());
+  doc.modifiedDate = Date.parse(new Date());
+  doc.dataType = dataType;
+  getCouchdb(dataType).insert(doc, callback(null, doc));
 };
 
-exports.getDocs = function(dataType, designname, viewname, params, callback){
-	getCouchdb(dataType).view(designname, viewname, params || {}, function(err, body) {
-		if(err){
-			return	callback(err);
-		}
+exports.view = function(dataType, designname, viewname, params, callback) {
+  getCouchdb(dataType).view(designname, viewname, params || {}, function(err, body) {
+    if (err) {
+      return callback(err);
+    }
 
-		var docs = [];
-		body.rows.forEach(function(doc) {
-			docs.push(doc.value);
-		});
-		callback(null, docs);
-	});
-};
-
-var ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-var generateId = function(length) {
-	var rtn = '';
-	for (var i = 0; i < length; i++) {
-		rtn += ALPHABET.charAt(Math.floor(Math.random() * ALPHABET.length));
-	}
-	return rtn;
-};
-
-var idGenerator = {
-	message:function(){
-		return generateId(8);
-	},
-	user:function(){
-		return generateId(6);
-	}
+    var docs = [];
+    body.rows.forEach(function(doc) {
+      docs.push(doc.value);
+    });
+    callback(null, docs);
+  });
 };

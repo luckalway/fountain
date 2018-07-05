@@ -58,30 +58,49 @@ router.post('/books', function(req, res){
 });
 
 router.get('/books/:id', function(req, res, next){
-  articleService.getDocs('articles', 'bookId', {}, function(err, body){
-    if(err){
-      return next(err);
-    }
-    res.send(body);
+  Promise.all([
+    ebookService.getBook(req.params.id),
+    articleService.getArticlesByBookId(req.params.id)
+  ]).then(function(results){
+    const book = results[0];
+    const articles = results[1];
+    book.articles = articles;
+    res.send(book);
     res.status(200).end();
+  }, function(errs){
+    next(errs);
   });
 });
+
+
 
 router.put('/books/:id', function(req, res){
-  articleService.moveArticles(req.params.id, req.body.articleTitles,function(body){
+  var callback =  function(body){
     res.send(body);
     res.status(200).end();
-  });
+  };
+
+  if(req.body.action == 'addArticles'){
+    articleService.moveArticles(req.params.id, req.body.articles, callback);
+  }else if(req.body.action == 'rearrange'){
+    articleService.rearrangeArticles(req.params.id, req.body.articles, callback);
+  }else{
+    res.status(404).end();
+  }
 });
 
-router.get('/articles/:id', function(req, res, next) {
-  articleService.getDoc(req.params.id, function(err, body){
-    if(err){
-      return next(err);
-    }
-
-    res.send(body);
+router.get('/books/:bookId/articles/:articleId', function(req, res, next) {
+  Promise.all([
+    articleService.getArticle(req.params.articleId),
+    ebookService.getBook(req.params.bookId)
+  ]).then(function(results){
+    const article = results[0];
+    const book = results[1];
+    article.bookTitle = book.title;
+    res.send(article);
     res.status(200).end();
+  }, function(err){
+    next(err);
   });
 });
 
