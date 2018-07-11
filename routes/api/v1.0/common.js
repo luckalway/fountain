@@ -74,7 +74,7 @@ router.get('/:dataTypes', function(req, res, next) {
 });
 
 router.get('/:dataType/:docId', function(req, res, next) {
-  commonService.getDoc(req.params.docId, req.params.dataType, function(err, body){
+  commonService.get('main', req.params.docId, function(err, body){
     if(err){
       return next(err);
     }
