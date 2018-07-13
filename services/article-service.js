@@ -78,7 +78,10 @@ exports.rearrangeArticles = function(bookId, articleIds, callback){
 
 exports.getArticlesByBookId = function(bookId){
 	const promise = new Promise(function(resolve, reject){
-		commonService.view('article', 'articles', 'bookId', {}, function(err, body){
+		commonService.view('article', 'articles', 'bookId', {
+			startkey: [bookId],
+			endkey: [bookId, {}]
+		}, function(err, body){
 			if(err){
 				return reject(err);
 			}
