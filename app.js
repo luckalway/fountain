@@ -39,7 +39,6 @@ var api2 = require('./routes/api2');
 var api3 = require('./routes/api3');
 var api4 = require('./routes/api4');
 
-
 // view engine setup
 app.engine('html', ejs.__express);
 app.set('views', path.join(__dirname, 'views'));
