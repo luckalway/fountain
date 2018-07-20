@@ -33,7 +33,8 @@ var admin = require('./routes/admin');
 var signIn = require('./routes/signIn');
 var message = require('./routes/message');
 var api2_V1_0 = require('./routes/api/v1.0/common');
-var api_ebooks1_0 = require('./routes/api/v1.0/ebook');
+var api_ebook1_0 = require('./routes/api/v1.0/ebook');
+var api_sermon1_0 = require('./routes/api/v1.0/sermon');
 var api = require('./routes/api');
 var api2 = require('./routes/api2');
 var api3 = require('./routes/api3');
@@ -76,7 +77,8 @@ app.use('/api/v2', api2);
 app.use('/api/v3', api3);
 app.use('/api/v4', api4);
 app.use('/api-2/v1.0', api2_V1_0);
-app.use('/api/ebook/v1.0/', api_ebooks1_0);
+app.use('/api/ebook/v1.0/', api_ebook1_0);
+app.use('/api/v1.0/', api_sermon1_0);
 
 app.use('/', message);
 app.use('/signout', function(req, res, next) {

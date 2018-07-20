@@ -31,9 +31,7 @@ exports.patchUpdateDoc = function(dataType, id, patchDoc, callback) {
 
 exports.get = function(dataType, id, callback){
   const promise = new Promise(function(resolve, reject){
-    getCouchdb(dataType).get(id, {
-      revs_info: true
-    }, function(err, body){
+    getCouchdb(dataType).get(id, function(err, body){
       if(err){
         reject(err);
       }else{
